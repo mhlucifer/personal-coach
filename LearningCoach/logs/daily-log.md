@@ -5,7 +5,8 @@
 - System: LearningCoach v2 initialized.
 - Main route: BIOS code reading.
 - Focus update: SMBIOS/Type9/Type41 are paused until updated materials arrive.
-- First suggested task: classify the next high-value BIOS document locally, then select one smallest topic from platform flow, HOB/PCD, PCIe, build inclusion, or debug strategy.
+- CXL spec received and classified as local-only material.
+- First suggested CXL task: learn why CXL devices are first discovered through PCIe BDF and Config Space.
 
 ## Template
 

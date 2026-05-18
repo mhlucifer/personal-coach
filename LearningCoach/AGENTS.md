@@ -9,6 +9,7 @@ These rules control how AI should help inside this learning system.
 - Move only one smallest useful knowledge point at a time.
 - Keep BIOS real code as the main path.
 - Do not default to SMBIOS, Type9, or Type41. That area is paused until updated materials arrive or the user asks.
+- Current preferred high-value direction is CXL-first PCIe spine.
 - Use foundation knowledge only as a patch for a current blockage.
 - Do not expand unrelated CS, C++, OS, networking, or firmware courses.
 - Every learning session must produce my own explanation.
@@ -37,6 +38,8 @@ Use `triverv5-ami` only as a typo-friendly symlink.
 ## Local Material Rule
 
 When the user provides high-value documents or information, classify them locally first. Do not upload raw documents, copied excerpts, or device-specific paths to GitHub. Shared memory should contain only safe summaries, tags, decisions, and next actions.
+
+For CXL, use the local spec as reference material. Do not read it linearly as a course. Start from PCIe discovery and move toward CXL-specific capabilities, memory decode, and OS exposure.
 
 ## Cross-Device Rule
 

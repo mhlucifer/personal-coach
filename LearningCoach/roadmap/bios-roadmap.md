@@ -54,6 +54,7 @@ This roadmap is work-problem driven. Do not use it as a textbook checklist.
 
 Until new materials say otherwise, prioritize higher-value BIOS owner skills:
 
+- CXL-first PCIe spine
 - platform boot/data flow
 - HOB and PCD usage
 - PCIe topology and resource/debug reasoning

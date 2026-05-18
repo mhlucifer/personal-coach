@@ -49,4 +49,8 @@ Raw documents and high-value reference materials also stay local-only. Use `refe
 
 ## Current BIOS Focus
 
+Current high-value direction: CXL-first PCIe spine.
+
+Start with the PCIe pieces needed for CXL discovery, resource allocation, and BIOS/OS exposure. Do not learn full PCIe before CXL.
+
 SMBIOS, Type9, and Type41 are paused as a default learning focus because that area is changing and is already relatively familiar. Return to it only when updated materials are provided or a current task requires it.

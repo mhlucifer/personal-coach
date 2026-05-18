@@ -24,5 +24,5 @@ Before each commit or push:
 ## First Learning Prompt
 
 ```text
-今天我有一份新的 BIOS 学习资料/信息，请先按 local-materials-policy 帮我本地归类，不上传 GitHub，然后帮我选一个最值得学的最小点。
+今天从 CXL-first PCIe Spine 开始：先学为什么 CXL 设备首先通过 PCIe BDF 和 Config Space 被发现，请按 daily-learning-loop 带我学。
 ```

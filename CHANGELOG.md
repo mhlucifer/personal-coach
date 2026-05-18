@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-05-18 Update 3
+
+### Changed
+
+- Set the next high-value BIOS learning direction to CXL-first PCIe spine.
+- Added a safe CXL roadmap and workflow for cross-device sync.
+- Classified the raw CXL specification as local-only material.
+
+### Added Files
+
+- `LearningCoach/roadmap/cxl-roadmap.md`
+- `LearningCoach/workflows/cxl-first-pcie-spine.md`
+- `LearningCoach/references/cxl-materials-index.md`
+
+### Not Uploaded
+
+- Raw CXL specification PDF under `local-materials/cxl/specs/`.
+- Local-only CXL material index under `local-materials/cxl/README.local.md`.
+
 ## 2026-05-18 Update 2
 
 ### Changed

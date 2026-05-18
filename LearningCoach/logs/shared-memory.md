@@ -6,12 +6,16 @@ This file is safe common memory for the company Mac and Windows desktop.
 
 - SMBIOS, Type9, and Type41 are paused as default learning topics.
 - Updated SMBIOS material will be classified later before that topic returns.
-- Current learning should prioritize higher-value BIOS owner skills.
+- Current learning direction is CXL-first PCIe spine.
 - Raw documents and high-value work materials stay local-only and are not uploaded.
 - GitHub sync is for safe memory, rules, logs, templates, and personal summaries.
 
 ## Current Focus Pool
 
+- CXL device discovery through PCIe
+- PCIe BDF / config space / capabilities needed for CXL
+- CXL.io / CXL.cache / CXL.mem mental model
+- HDM Decoder and CXL memory exposure
 - platform boot and data flow
 - HOB / PCD / config path
 - PCIe topology and resource/debug reasoning
@@ -20,5 +24,10 @@ This file is safe common memory for the company Mac and Windows desktop.
 
 ## Next Action
 
-When new material arrives, classify it locally with `references/local-materials-policy.md`, then choose one smallest learning point for the next daily loop.
+Start with:
 
+```text
+Why is a CXL device first discovered as a PCIe device through BDF and Config Space?
+```
+
+Use `roadmap/cxl-roadmap.md` and `workflows/cxl-first-pcie-spine.md`.
