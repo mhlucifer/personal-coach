@@ -6,7 +6,7 @@
 
 - Set the next high-value BIOS learning direction to CXL-first PCIe spine.
 - Added a safe CXL roadmap and workflow for cross-device sync.
-- Classified the raw CXL specification as local-only material.
+- Classified the raw CXL and PCIe specifications as local-only material.
 
 ### Added Files
 
@@ -17,7 +17,9 @@
 ### Not Uploaded
 
 - Raw CXL specification PDF under `local-materials/cxl/specs/`.
+- Raw PCIe Base specification PDF under `local-materials/pcie/specs/`.
 - Local-only CXL material index under `local-materials/cxl/README.local.md`.
+- Local-only PCIe material index under `local-materials/pcie/README.local.md`.
 
 ## 2026-05-18 Update 2
 

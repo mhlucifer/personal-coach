@@ -5,6 +5,7 @@ Raw CXL materials are local-only and ignored by Git.
 ## Local-Only Source
 
 - CXL 3.1 specification PDF is stored under the ignored `local-materials/cxl/specs/` folder.
+- PCI Express Base 5.0 PDF is stored under the ignored `local-materials/pcie/specs/` folder.
 - Do not upload the PDF, screenshots, copied excerpts, or long spec text.
 
 ## Safe Shared Tags
@@ -26,4 +27,3 @@ Start from questions:
 - What memory/resource window is required?
 - How does firmware expose the result to the OS?
 - Where can a BIOS engineer add logs or verify state?
-
