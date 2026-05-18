@@ -2,6 +2,10 @@
 code-repositories/
 data/
 english/ielts/
+local-materials/
+LearningCoach/local/
+LearningCoach/inbox/
+LearningCoach/references/private/
 
 # macOS and editor noise
 .DS_Store
@@ -31,8 +35,13 @@ coverage/
 *.iso
 *.img
 *.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
 *.mp3
 *.mp4
 *.wav
 *.m4a
-

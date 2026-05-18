@@ -13,7 +13,7 @@ real code problem -> roadmap location -> smallest knowledge patch -> output -> e
 Use one of these prompts:
 
 ```text
-今天我想学习 Type9 里 PciIo 遍历和固定 BDF 的区别，请按 daily-learning-loop 带我学。
+今天我有一份新的 BIOS 学习资料/信息，请先本地归类，不上传 GitHub，然后帮我判断它属于哪条学习路线。
 ```
 
 ```text
@@ -45,3 +45,8 @@ At the end of each week:
 
 BIOS source code is not stored in this GitHub repository. Use `references/source-index.md` to find local read-only sources.
 
+Raw documents and high-value reference materials also stay local-only. Use `references/local-materials-policy.md` before classifying or summarizing them.
+
+## Current BIOS Focus
+
+SMBIOS, Type9, and Type41 are paused as a default learning focus because that area is changing and is already relatively familiar. Return to it only when updated materials are provided or a current task requires it.

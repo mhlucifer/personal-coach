@@ -1,46 +1,47 @@
-# 7 Day BIOS Code Reading Start
+# 7 Day BIOS Owner-Skill Start
 
 Each day is 45-60 minutes and must end with exam questions and a log update.
 
-## Day 1: Type9 Is A Slot Table
+SMBIOS/Type9/Type41 are intentionally not the default focus for this week.
 
-Read `TencentType9Update.inf` and `TencentType9UpdateMain`.
+## Day 1: Local Material Intake
 
-Output: module entry, protocols, dependency, and runtime phase.
+Classify the next high-value BIOS document or information locally.
 
-## Day 2: Type9 Main Loop
+Output: source type, topic tags, confidentiality status, and whether it can produce GitHub-safe memory.
 
-Read `UpdateSmbiosType9TableSysSlot`.
+## Day 2: Platform Flow Map
 
-Output: old Type9 delete path, RootBridge enumeration path, new Type9 add path.
+Pick one platform flow from the new material or current work.
 
-## Day 3: PCI IO And BDF
+Output: phase, entry point, upstream input, downstream consumer, and current unknown.
 
-Read `FindAllRootBridgeAndDownStreamPort`.
+## Day 3: HOB / PCD / Config Path
 
-Output: explain `EFI_PCI_IO_PROTOCOL`, `GetLocation`, BDF, and downstream-port detection.
+Trace one data item through HOB, PCD, static config, or dynamic detection.
 
-## Day 4: RootBridge To Type9
+Output: where the data is produced, transformed, and consumed.
 
-Trace how `ROOT_BRIDGE` fields become Type9 fields.
+## Day 4: PCIe / Device Topology
 
-Output: explain `SlotID`, `BusNum`, `DevFuncNum`, `SlotType`, and `SlotDataBusWidth`.
+Read one PCIe or device topology path that matters for current work.
 
-## Day 5: Static vs Dynamic Type9
+Output: BDF/topology meaning, resource or link implication, and debug observation.
 
-Compare `StaticSmbiosType9Table` and `UpdateSmbiosType9TableSysSlot`.
+## Day 5: Build Inclusion / Override
 
-Output: when static fallback is used and what risk it avoids.
+Trace how one module, library, or override is included.
 
-## Day 6: Type41
+Output: INF/DSC/FDF/SDL/CIF relationship and modification risk.
 
-Read `TencentUpdateSmbiosType41 -> OemUpdateSmbiosType41Table`.
+## Day 6: Debug Strategy
 
-Output: difference between onboard device and slot.
+Design a debug plan for one real problem.
+
+Output: log points, expected values, failure interpretation, and verification command.
 
 ## Day 7: Review And Exam
 
-Use the five required exam types for Type9 and Type41.
+Use the five required exam types for the week's selected high-value topic.
 
 Output: update `weakness.md` and choose next week's three priorities.
-

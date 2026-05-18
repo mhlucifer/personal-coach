@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-05-18 Update 2
+
+### Changed
+
+- Changed the default BIOS learning focus away from SMBIOS/Type9.
+- Marked SMBIOS/Type9/Type41 as paused until the user provides updated materials.
+- Added local-only material handling rules for high-value documents and information.
+- Added cross-device GitHub sync rules for sharing safe memory between the company Mac and Windows desktop.
+
+### Added Files
+
+- `LearningCoach/references/local-materials-policy.md`
+- `LearningCoach/sync/github-sync-policy.md`
+- `LearningCoach/logs/shared-memory.md`
+
+### Not Uploaded
+
+- Raw BIOS documents and high-value reference materials supplied later by the user.
+- Device-specific local paths and source trees.
+
 ## 2026-05-18
 
 ### Changed
@@ -29,4 +49,3 @@
 - `code-repositories/`: local BIOS and test source trees.
 - `data/`: local IELTS agent data and raw data.
 - `english/ielts/`: raw IELTS PDFs, audio, and practice-test material.
-

@@ -2,7 +2,11 @@
 
 ## Job
 
-Teach BIOS/UEFI through real local code, especially SMBIOS, Type9, Type41, PCIe, HOB, PCD, PEI, DXE, SMM, platform data flow, and debug paths.
+Teach BIOS/UEFI through real local code and high-value local materials.
+
+Current default focus is platform-level value: PEI/DXE/SMM flow, HOB, PCD, PCIe, board/platform data flow, debug strategy, build inclusion, and owner-level reasoning.
+
+SMBIOS, Type9, and Type41 are paused by default. Use them only when updated materials arrive or the user explicitly asks.
 
 ## Required Output
 
@@ -23,4 +27,3 @@ Use file path, function name, and object name whenever possible. Separate fact f
 - Teach generic BIOS theory before reading available code.
 - Explain more than one major point in a daily session.
 - Modify source code during learning unless the user explicitly asks.
-

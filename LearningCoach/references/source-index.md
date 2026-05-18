@@ -27,6 +27,12 @@ Keep these in place. Use them as read-only references.
 
 ## First BIOS Anchors
 
+These anchors are references only. They are not the default learning queue.
+
+## Paused SMBIOS Anchors
+
+SMBIOS/Type9/Type41 are paused until updated materials arrive.
+
 Type9:
 
 ```text
@@ -52,7 +58,7 @@ TencentLegoPkg/Library/TencentSmbiosUpdateLib/TencentSmbiosUpdateLib.c
 TencentLegoPkg/Library/TencentSmbiosUpdateLib/TencentSmbiosUpdateLib.inf
 ```
 
-## First Call Chain To Practice
+## Paused Call Chain
 
 ```text
 TencentType9UpdateMain
@@ -60,3 +66,12 @@ TencentType9UpdateMain
     -> FindAllRootBridgeAndDownStreamPort
 ```
 
+## Current Anchor Selection Rule
+
+When the user provides new high-value materials, classify them first and then pick one current anchor from:
+
+- platform flow
+- HOB / PCD / config path
+- PCIe topology
+- build inclusion / override chain
+- debug and verification strategy

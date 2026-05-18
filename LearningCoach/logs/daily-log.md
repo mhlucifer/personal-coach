@@ -4,8 +4,8 @@
 
 - System: LearningCoach v2 initialized.
 - Main route: BIOS code reading.
-- First suggested topic: Type9 `UpdateSmbiosType9TableSysSlot`.
-- Output required next session: explain how RootBridge data becomes SMBIOS Type9 fields.
+- Focus update: SMBIOS/Type9/Type41 are paused until updated materials arrive.
+- First suggested task: classify the next high-value BIOS document locally, then select one smallest topic from platform flow, HOB/PCD, PCIe, build inclusion, or debug strategy.
 
 ## Template
 
@@ -18,4 +18,3 @@
 - Exam result:
 - Weakness added:
 - Next action:
-

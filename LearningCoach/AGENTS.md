@@ -8,6 +8,7 @@ These rules control how AI should help inside this learning system.
 - Start by locating the problem in a roadmap.
 - Move only one smallest useful knowledge point at a time.
 - Keep BIOS real code as the main path.
+- Do not default to SMBIOS, Type9, or Type41. That area is paused until updated materials arrive or the user asks.
 - Use foundation knowledge only as a patch for a current blockage.
 - Do not expand unrelated CS, C++, OS, networking, or firmware courses.
 - Every learning session must produce my own explanation.
@@ -33,7 +34,14 @@ When code is available locally, inspect code before answering. Prefer:
 
 Use `triverv5-ami` only as a typo-friendly symlink.
 
+## Local Material Rule
+
+When the user provides high-value documents or information, classify them locally first. Do not upload raw documents, copied excerpts, or device-specific paths to GitHub. Shared memory should contain only safe summaries, tags, decisions, and next actions.
+
+## Cross-Device Rule
+
+This repository is shared between the company Mac and the Windows desktop. Keep common memory in GitHub-safe Markdown files and keep local-only material in ignored folders on each device.
+
 ## Safety Rule
 
 Do not modify BIOS source code, company code, build scripts, `.git`, or old local study assets unless the user explicitly asks.
-

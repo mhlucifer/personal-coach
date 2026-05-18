@@ -27,7 +27,7 @@ This roadmap is work-problem driven. Do not use it as a textbook checklist.
 - Type0, Type1, Type2, Type3, Type4, Type9, Type11, Type17, Type41.
 - Table generation flow, string area, handle, and update/delete behavior.
 - `dmidecode` verification.
-- Type9 and Type41 are current deep-dive targets.
+- Current status: paused as a default learning focus. Return only after updated materials arrive or a current task requires it.
 
 ## Level 4: PCIe / PCI Enumeration
 
@@ -50,3 +50,12 @@ This roadmap is work-problem driven. Do not use it as a textbook checklist.
 - Refactor config tables safely.
 - Create review checklists for customer issues and version support.
 
+## Current Priority
+
+Until new materials say otherwise, prioritize higher-value BIOS owner skills:
+
+- platform boot/data flow
+- HOB and PCD usage
+- PCIe topology and resource/debug reasoning
+- build inclusion and override relationships
+- failure localization and verification strategy
