@@ -1,0 +1,38 @@
+# Local source trees and large reference assets
+code-repositories/
+data/
+english/ielts/
+
+# macOS and editor noise
+.DS_Store
+**/.DS_Store
+.idea/
+.vscode/
+
+# Runtime/build/cache output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+node_modules/
+dist/
+build/
+target/
+coverage/
+
+# Archives and binary reference files
+*.7z
+*.zip
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.bin
+*.iso
+*.img
+*.pdf
+*.mp3
+*.mp4
+*.wav
+*.m4a
+
