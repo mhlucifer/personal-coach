@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-05-19 Update 2
+
+### Changed
+
+- Added a 365-day operating system for the BIOS/IIO/CXL, CS/AI, and IELTS plan.
+- Added daily S/A/C/0 status tracking and zero-day recovery rules.
+- Extended the anxiety control loop with a course-anxiety gate.
+- Added monthly review rules to connect daily effort to annual artifacts.
+- Set the official Day 1 to 2026-05-20 and shifted the annual period to end on 2027-05-19.
+- Prepared the 2026-05-20 Day 1 learning plan in `LearningCoach/logs/daily-log.md`.
+
+### Added Files
+
+- `LearningCoach/roadmap/365-day-plan.md`
+- `LearningCoach/logs/365-progress.md`
+- `LearningCoach/workflows/drift-recovery-loop.md`
+- `LearningCoach/workflows/monthly-review-loop.md`
+
+### Not Uploaded
+
+- Raw CXL, PCIe, IELTS, company, and local BIOS source materials remain local-only.
+
 ## 2026-05-19
 
 ### Changed

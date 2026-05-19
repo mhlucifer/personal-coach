@@ -54,3 +54,31 @@ Current high-value direction: CXL-first PCIe spine.
 Start with the PCIe pieces needed for CXL discovery, resource allocation, and BIOS/OS exposure. Do not learn full PCIe before CXL.
 
 SMBIOS, Type9, and Type41 are paused as a default learning focus because that area is changing and is already relatively familiar. Return to it only when updated materials are provided or a current task requires it.
+
+## 365-Day Operating System
+
+The annual plan lives in:
+
+```text
+roadmap/365-day-plan.md
+```
+
+Daily visible progress lives in:
+
+```text
+logs/365-progress.md
+```
+
+Use these workflows when needed:
+
+```text
+workflows/drift-recovery-loop.md
+workflows/monthly-review-loop.md
+workflows/anxiety-control-loop.md
+```
+
+The rule for this year:
+
+```text
+high challenge output -> low startup threshold -> visible scoreboard -> recovery after drift
+```
