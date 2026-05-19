@@ -41,6 +41,13 @@ Never upload:
 - `LearningCoach/inbox/`
 - `LearningCoach/references/private/`
 
+Also never upload raw non-public vendor material:
+
+- Intel BWG / EDS / register specifications
+- customer-team or platform-enablement PDFs
+- copied tables, register definitions, or large document excerpts
+- screenshots containing internal paths, customer data, board details, or document text
+
 ## Shared Memory Rule
 
 Use `LearningCoach/logs/shared-memory.md` for cross-device continuity. Keep it short and safe:
@@ -50,4 +57,15 @@ Use `LearningCoach/logs/shared-memory.md` for cross-device continuity. Keep it s
 - active weaknesses
 - next action
 - recent decisions
+
+## NDA / Vendor Document Rule
+
+For non-public documents, use AI assistance only through safe prompts:
+
+- ask about concepts or relationships
+- provide chapter names or keywords
+- provide short paraphrases in your own words
+- ask for a study plan or mental model
+
+Avoid sending raw pages, full sections, copied tables, or exact register text.
 

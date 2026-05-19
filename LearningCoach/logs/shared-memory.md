@@ -9,6 +9,9 @@ This file is safe common memory for the company Mac and Windows desktop.
 - Current learning direction is CXL-first PCIe spine.
 - Raw documents and high-value work materials stay local-only and are not uploaded.
 - GitHub sync is for safe memory, rules, logs, templates, and personal summaries.
+- Non-public Intel/BWG/EDS/register-spec materials stay in ignored local-only folders.
+- AI help may use topic names, chapter names, short paraphrases, and narrow questions;
+  do not upload full PDFs, copied tables, register definitions, screenshots, or large excerpts.
 
 ## Current Focus Pool
 
@@ -31,3 +34,14 @@ Why is a CXL device first discovered as a PCIe device through BDF and Config Spa
 ```
 
 Use `roadmap/cxl-roadmap.md` and `workflows/cxl-first-pcie-spine.md`.
+
+## Cross-Device Privacy Rule
+
+Both Windows and Mac follow the same boundary:
+
+```text
+local-only evidence -> own summary -> safe GitHub memory
+```
+
+Use local files for evidence, but sync only learning strategy, indexes, questions,
+weakness logs, and summaries written in your own words.

@@ -1,37 +1,70 @@
 # Source Index
 
-This file records local read-only references. Do not upload source code into this repository.
+This file records local references for study. Do not upload company source code,
+raw documents, or copied internal excerpts into this repository.
 
 ## Main Local BIOS Codebase
 
-```text
-/Users/tzy/code/personal-coach/code-repositories/tririverv5-ami
-```
-
-Typo-friendly symlink:
+The current TriRiver V5 source tree is kept locally under an ignored directory:
 
 ```text
-/Users/tzy/code/personal-coach/code-repositories/triverv5-ami
+code-repositories/tririverv5-ami
 ```
 
-## Old Learning Assets
+Use it for code tracing, `rg`, build-path reading, and tutor questions. It should
+stay local-only.
 
-Keep these in place. Use them as read-only references.
+## Local Raw Materials
+
+Original documents and extracted raw references are kept under:
 
 ```text
-/Users/tzy/code/personal-coach/code-repositories/tririverv5-ami/.ai_knowledge
-/Users/tzy/code/personal-coach/code-repositories/tririverv5-ami/smbios-learning-studio
-/Users/tzy/code/personal-coach/code-repositories/tririverv5-ami/学习
-/Users/tzy/code/personal-coach/code-repositories/tririverv5-ami/总结
+local-materials/tririver-v5/raw-documents
 ```
 
-## First BIOS Anchors
+This directory is ignored by git. Use it as evidence while writing your own
+summaries, but do not copy raw internal content into public notes.
 
-These anchors are references only. They are not the default learning queue.
+Current local categories:
 
-## Paused SMBIOS Anchors
+- `00_inbox`: new unsorted files.
+- `01_ami_aptio_training`: AMI/AptioV and UEFI phase fundamentals.
+- `02_uefi_boot_setup_nvram`: Boot, Setup, and NVRAM.
+- `03_smbios_acpi_ras_smi`: SMBIOS, ACPI, SMI, and RAS.
+- `04_pcie_and_pci_bus`: PCIe and PCI bus materials.
+- `05_intel_platform_gnr`: Intel platform references; local-only.
+- `06_project_design_and_templates`: project designs and templates.
+- `90_extracted_docx_workspace`: extracted document workspaces.
 
-SMBIOS/Type9/Type41 are paused until updated materials arrive.
+Foundation local materials:
+
+- `local-materials/foundation/computer-architecture`: local-only books and
+  architecture references.
+
+## Local Detailed Learning Notes
+
+Detailed BIOS notes imported for study are under an ignored private directory:
+
+```text
+LearningCoach/references/private/tririver-v5
+```
+
+Important subfolders:
+
+- `smbios-learning-studio`: SMBIOS Type9/Type41/SPD CRC and related study docs.
+- `self-learning-import`: imported personal learning notes.
+- `codex-shared-references`: reusable BIOS trace, debug, build, and glossary notes.
+
+The public notes area keeps only the study index:
+
+```text
+LearningCoach/notes/bios/tririver-v5/README.md
+```
+
+## Available SMBIOS Anchors
+
+SMBIOS/Type9/Type41 are available anchors for work tasks and later study. They
+are not the default learning queue unless explicitly selected.
 
 Type9:
 
@@ -58,7 +91,7 @@ TencentLegoPkg/Library/TencentSmbiosUpdateLib/TencentSmbiosUpdateLib.c
 TencentLegoPkg/Library/TencentSmbiosUpdateLib/TencentSmbiosUpdateLib.inf
 ```
 
-## Paused Call Chain
+## Current Call Chain
 
 ```text
 TencentType9UpdateMain
@@ -68,7 +101,8 @@ TencentType9UpdateMain
 
 ## Current Anchor Selection Rule
 
-When the user provides new high-value materials, classify them first and then pick one current anchor from:
+When new high-value materials arrive, classify them first and then pick one
+current anchor from:
 
 - platform flow
 - HOB / PCD / config path

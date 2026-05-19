@@ -34,6 +34,8 @@ Only GitHub-safe learning memory:
 - screenshots containing internal data
 - board/customer/version details unless explicitly cleared
 - device-specific absolute paths from Windows or Mac
+- Intel platform documents that are not clearly public redistributable material
+- NDA, EDS, register-spec, customer-team, or platform-enablement PDFs
 
 ## Classification Fields
 
@@ -48,4 +50,26 @@ For each material, classify locally with:
 - why it is valuable
 - safe shared-memory summary
 - next smallest learning action
+
+## Intel / Vendor Documents
+
+Default to local-only unless the document is clearly public and redistributable.
+
+Safe learning output:
+
+- your own summary of a concept
+- a study question
+- a high-level dependency map
+- page-independent terminology notes
+- chapter or keyword based questions
+- short paraphrases written in your own words
+
+Avoid uploading:
+
+- raw PDF/DOC files
+- copied tables
+- copied register definitions
+- document IDs plus internal context
+- board-specific interpretation tied to customer code
+- full pages, full sections, or screenshots of non-public documents
 

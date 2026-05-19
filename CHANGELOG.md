@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-05-19
+
+### Changed
+
+- Added cross-device privacy rules for local-only Intel/BWG/EDS/vendor documents.
+- Clarified that GitHub sync is for safe learning memory, not raw documents or source trees.
+- Added TriRiver V5 local material indexes and ignored local study locations.
+
+### Not Uploaded
+
+- TriRiver V5 source tree under `code-repositories/`.
+- Raw documents under `local-materials/`.
+- Detailed private notes under `LearningCoach/references/private/`.
+
 ## 2026-05-18 Update 3
 
 ### Changed
