@@ -18,6 +18,7 @@ Prefer writing down:
 ## Index
 
 - [BIOS Debug Casebook](./casebook.md)
+- [Bug Window Sync Rules](./bug-window-sync-rules.md)
 - [Debug Case Template](./_case-template.md)
 
 ## Case Notes

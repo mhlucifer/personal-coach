@@ -9,6 +9,7 @@
 - Added a parked debug note for the FVB StandaloneMM ASSERT case.
 - Added a BIOS debug casebook index and reusable case template.
 - Marked the SMBIOS Type45 BIOS firmware case as verified fixed after `dmidecode -t 45` showed BIOS/BMC/TPM records.
+- Added bug-window sync rules so future debug notes are merged back to GitHub `main`.
 
 ### Added Files
 
@@ -16,6 +17,7 @@
 - `LearningCoach/notes/bios/debug/fvb-standalonemm-assert-type11-assettag-case.md`
 - `LearningCoach/notes/bios/debug/casebook.md`
 - `LearningCoach/notes/bios/debug/_case-template.md`
+- `LearningCoach/notes/bios/debug/bug-window-sync-rules.md`
 
 ### Not Uploaded
 
