@@ -7,11 +7,14 @@
 - Added BIOS debug case notes for SMBIOS Type45 missing BIOS firmware version.
 - Documented the static-vs-dynamic SMBIOS tracing method used to locate Type45 producers.
 - Added a parked debug note for the FVB StandaloneMM ASSERT case.
+- Added a BIOS debug casebook index and reusable case template.
 
 ### Added Files
 
 - `LearningCoach/notes/bios/debug/type45-bios-firmware-version-missing.md`
 - `LearningCoach/notes/bios/debug/fvb-standalonemm-assert-type11-assettag-case.md`
+- `LearningCoach/notes/bios/debug/casebook.md`
+- `LearningCoach/notes/bios/debug/_case-template.md`
 
 ### Not Uploaded
 
