@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-05-25
+
+### Changed
+
+- Added BIOS debug case notes for SMBIOS Type45 missing BIOS firmware version.
+- Documented the static-vs-dynamic SMBIOS tracing method used to locate Type45 producers.
+- Added a parked debug note for the FVB StandaloneMM ASSERT case.
+
+### Added Files
+
+- `LearningCoach/notes/bios/debug/type45-bios-firmware-version-missing.md`
+- `LearningCoach/notes/bios/debug/fvb-standalonemm-assert-type11-assettag-case.md`
+
+### Not Uploaded
+
+- Local BIOS source trees under `code-repositories/`.
+- Raw screenshots, logs, and machine-local debug artifacts.
+
 ## 2026-05-19 Update 2
 
 ### Changed
