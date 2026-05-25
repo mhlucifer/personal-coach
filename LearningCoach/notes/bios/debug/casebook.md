@@ -7,7 +7,7 @@ This is the index for reusable BIOS troubleshooting cases. The goal is to turn e
 | ID | Date | Area | Status | Symptom | Main Lesson | Case Note |
 | --- | --- | --- | --- | --- | --- | --- |
 | DBG-001 | 2026-05-20 | FVB / StandaloneMM / SMBIOS changes | Parked, not reproducible | `FwBlockServiceStandaloneMm.c` ASSERT and page fault after Type2 AssetTag / Type11 TDX related image changes | Separate source-change suspicion from machine-local flash/FV/NVRAM state; capture failing FV base address next time | [FVB StandaloneMM ASSERT](./fvb-standalonemm-assert-type11-assettag-case.md) |
-| DBG-002 | 2026-05-25 | SMBIOS Type45 | Confirmed | `dmidecode -t 45` shows BMC/TPM Type45 but no BIOS Firmware Type45 / BIOS version | Use visible SMBIOS strings to split producers; distinguish dynamic `SmbiosProtocol->Add()` records from static `.dt/.sdl` table records | [Type45 BIOS firmware version missing](./type45-bios-firmware-version-missing.md) |
+| DBG-002 | 2026-05-25 | SMBIOS Type45 | Verified fixed | `dmidecode -t 45` showed BMC/TPM Type45 but no BIOS Firmware Type45 / BIOS version | Use visible SMBIOS strings to split producers; distinguish dynamic `SmbiosProtocol->Add()` records from static `.dt/.sdl` table records | [Type45 BIOS firmware version missing](./type45-bios-firmware-version-missing.md) |
 
 ## Case Rules
 

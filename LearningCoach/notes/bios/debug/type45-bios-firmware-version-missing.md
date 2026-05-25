@@ -2,7 +2,7 @@
 
 Date: 2026-05-25
 
-Status: confirmed. The final generated token value is `FIRMWARE_INVENTORY_INFO = 0`, so the BIOS Firmware Type45 static record is compiled out.
+Status: verified fixed. The final generated token value had been `FIRMWARE_INVENTORY_INFO = 0`, so the BIOS Firmware Type45 static record was compiled out. Enabling it made the BIOS Firmware Type45 record appear.
 
 ## Symptom
 
@@ -12,6 +12,29 @@ Status: confirmed. The final generated token value is `FIRMWARE_INVENTORY_INFO =
 - `TPM Firmware`, with version such as `70039.24078912`
 
 But there is no visible `BIOS Firmware` Type45 record / BIOS version information.
+
+## Verification Result
+
+After enabling the BIOS Type45 static record, `dmidecode -t 45` shows three Firmware Inventory records:
+
+- `BIOS Firmware`
+- `BMC Firmware`
+- `TPM Firmware`
+
+The verified BIOS Type45 record includes:
+
+```text
+Firmware Component Name: BIOS Firmware
+Firmware Version: 0.01.01
+Release Date: 05/25/2026
+Lowest Supported Firmware Version: 0.01.01
+Image Size: 50 MB
+State: Enabled
+Associated Components: 1
+  0x0000
+```
+
+This confirms the root cause was the static BIOS Type45 record being disabled, not a `dmidecode` parsing issue and not a BMC/TPM dynamic Type45 issue.
 
 ## Key Code Paths
 
@@ -242,11 +265,11 @@ Associated Components: 1
 
 ## Suggested Fix Direction
 
-First fix candidate:
+Applied fix direction:
 
 - Enable `FIRMWARE_INVENTORY_INFO` / `TYPE45_STRUCTURE` for this platform path, or add a project override that forces the BIOS Type45 static record into the SMBIOS static table.
 
-After enabling it, verify:
+Verification checklist:
 
 - `dmidecode -t 45` has three records: BIOS Firmware, BMC Firmware, TPM Firmware.
 - BIOS Type45 `Firmware Version` matches the expected `BIOS_TAG` or Type0 BIOS version.

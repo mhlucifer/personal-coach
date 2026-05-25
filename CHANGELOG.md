@@ -8,6 +8,7 @@
 - Documented the static-vs-dynamic SMBIOS tracing method used to locate Type45 producers.
 - Added a parked debug note for the FVB StandaloneMM ASSERT case.
 - Added a BIOS debug casebook index and reusable case template.
+- Marked the SMBIOS Type45 BIOS firmware case as verified fixed after `dmidecode -t 45` showed BIOS/BMC/TPM records.
 
 ### Added Files
 
