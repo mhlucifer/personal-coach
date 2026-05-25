@@ -8,6 +8,7 @@
 - `02_smbios_agent_validation_handoff.md`：AI + SMBIOS 可见式验证闭环交接。
 - `03_ai_code_review_engine_v3_handoff.md`：AI Code Review engine-v3 架构迭代交接。
 - `04_bios_ai_efficiency_ppt_outline.md`：基于三份交接文档重新整理的 PPT 大纲。
+- `skills/guizang-ppt-skill/`：网页 PPT 生成 skill，后续制作汇报 PPT 可直接复用。
 
 ## 汇报主线
 
@@ -16,4 +17,3 @@
 1. Type9 多版型显示规则从代码分支收敛到 SlotNumber + Layout 表方案。
 2. AI 提效先落在 SMBIOS 验证闭环和 Type8 / Type12 porting 试点方向。
 3. AI Code Review 从结果展示链路升级为上下文优先的风险审查闭环。
-
