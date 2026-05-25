@@ -23,8 +23,8 @@
 | 页码 | 页面结论 | 推荐版式 | 页面主图 |
 |---|---|---|---|
 | 1 | 三项阶段成果已形成 | 三卡总览 | 成果卡片 |
-| 2 | Type9 用 Layout 表降低维护成本 | 问题 + 方案流程 | Type9 映射链路 |
-| 3 | 特例优先匹配减少分支膨胀 | 规则矩阵 | 通用/特例/冲突表 |
+| 2 | Type9 客户显示名差异多，不能继续靠代码分支维护 | 问题 + 方案 + 展示结果 | Type9 最终展示示例 |
+| 3 | Layout 表通过通用兜底和特例优先选出最终显示名 | 输入 + 规则匹配 + 输出 | SlotNumber=7 命中示例 |
 | 4 | AI 提效先切两个重复场景 | 双场景卡片 | SMBIOS / Porting 并列 |
 | 5 | SMBIOS 验证从人工流程变成 Agent 闭环 | Before / After 对比 | 人工 vs Agent |
 | 6 | MVP 主链路已收敛为 BIOS 到报告 | 横向流程 | 8 步流程图 |
@@ -90,134 +90,172 @@
 
 ---
 
-## 2. V5 Type9 采用 SlotNumber + Layout 表，降低多版型显示规则维护成本
+## 2. V5 Type9 的关键问题是客户显示名差异多，不能继续靠代码分支维护
 
 ### 推荐版式
 
-上方结论标题。中间左侧放“问题”两条，右侧放 Type9 映射链路。底部放“旧方式 / 新方式”小对比。
+问题 + 方案 + 展示结果三栏页。左侧讲当前痛点，中间讲本次方案，右侧放一个最终展示示例。这样听众能先知道“为什么要改”，再知道“我们改成什么”，最后看到“最后输出长什么样”。
 
-页面应先讲为什么要改，再讲 SlotNumber 和 Layout 表。
+三栏建议比例：左侧 32%，中间 36%，右侧 32%。右侧展示示例要像结果卡，不要只写流程箭头。
 
 ### 页面最终标题
 
 ```text
-Type9 的关键变化是把客户显示规则从代码分支中抽出来
+V5 Type9 的关键问题是客户显示名差异多，不能继续靠代码分支维护
 ```
 
 副标题可写：
 
 ```text
-同一个物理槽位在不同版型下可能显示为 Slot、PCIe 或 Node-Slot，显示名不能再靠代码现场拼接。
+同一个物理槽位在不同版型下可能显示为 Slot、PCIe 或 Node-Slot，客户可见名称必须以 PPT 定义为准。
 ```
 
 ### 屏幕正文文案
 
-左侧问题块：
+左侧“当前问题”：
 
 ```text
-现状问题
-- 客户 PPT 中存在 20+ 种 Type9 显示布局
-- Board、Single/Multi、Node 会影响最终显示名
-- 继续堆 if/else 会让新增版型成本越来越高
+当前问题
+- 客户 PPT 中有 20+ 种 Type9 显示布局
+- Board、Single/Multi、Node 都会影响显示名
+- 继续在代码里拼 Slot / PCIe / Node，会让新增版型越来越难维护
 ```
 
-右侧方案链路：
+中间“本次方案”：
 
 ```text
-PCIe / IIO
-读取硬件槽位信息
-        ↓
-SlotNumber
-作为运行时匹配依据
-        ↓
-Layout 表
-维护客户 PPT 显示规则
-        ↓
-DisplayName
-进入 SMBIOS Type9
+本次方案
+- SlotNumber：运行时识别物理槽位
+- Layout 表：维护不同版型的显示规则
+- DisplayName：严格来自客户 PPT，最终进入 SMBIOS Type9
+- SilkName：只用于映射校验和问题定位
 ```
 
-底部对比：
+右侧“最终展示示例”：
 
 ```text
-旧方式：代码同时负责找槽位和决定显示名
-新方式：代码负责找槽位，Layout 表负责显示名
+示例
+运行时槽位：SlotNumber = 7
+版型条件：Multi + Node0
+Layout 命中：DisplayName = Node0-Slot20
+Type9 输出：SlotDesignation = Node0-Slot20
+```
+
+底部收束句：
+
+```text
+这次改动的重点不是重新枚举槽位，而是把“显示名怎么来”从代码分支迁移到可维护的规则表。
 ```
 
 ### 图怎么画
 
-主图画成从左到右的 4 步流程：
+画成三栏结构：
+
+```text
+当前问题                 本次方案                         最终展示
+20+ 显示布局      ->      SlotNumber + Layout 表     ->      Type9 SlotDesignation
+代码拼显示名              PPT DisplayName                   Node0-Slot20
+新增版型难维护            表驱动维护                         客户可见字段
+```
+
+中间方案栏可以放一条简化链路：
 
 ```text
 PCIe/IIO -> SlotNumber -> Layout Table -> DisplayName -> SMBIOS Type9
 ```
 
-每个节点下面只放一行说明。`DisplayName` 节点用蓝色强调，因为它是客户可见结果。
+右侧结果卡要突出 `SlotDesignation`，让听众知道这套方案最后影响的是客户能看到的 Type9 字段。
 
 ### 讲述顺序
 
-先讲“Type9 不是单纯改字段名，核心是多版型显示差异”。再讲“运行时能稳定拿到的是 SlotNumber，客户可见名称必须来自 PPT”。最后落到“所以把显示规则放进 Layout 表”。
+先讲当前痛点：不是找不到槽位，而是同一个槽位在不同版型下显示名不同。再讲本次方案：代码负责拿 SlotNumber，Layout 表负责给 DisplayName。最后指到右侧展示：最终进入 Type9 的是客户 PPT 里定义的显示名。
 
 ### 不要写
 
 - 不讲 `FindBestSlotDesc()`、`BuildType9FromRootBridge()` 等函数名。
 - 不放完整 CSV 字段列表。
 - 不讲 V3 AI 逻辑细节。
+- 不把 SilkName 写成运行时主 key。
 
 ---
 
-## 3. Type9 用特例优先匹配承接版型差异，避免继续堆代码分支
+## 3. Layout 表通过“通用兜底 + 特例优先”选出最终 Type9 显示名
 
 ### 推荐版式
 
-规则矩阵页。上方一句结论，中间放“通用规则 / 特例规则 / 冲突规则”三列表，右侧或底部放一个具体例子。
+输入 -> 规则匹配 -> 输出展示页。左侧放运行时输入，中间放 Layout 表命中示例，右侧放最终 Type9 输出。第 2 页讲“为什么需要表”，第 3 页讲“表怎么选出正确显示名”。
 
 ### 页面最终标题
 
 ```text
-Type9 通过“特例优先、通用兜底”减少规则穷举
+Layout 表通过“通用兜底 + 特例优先”选出最终 Type9 显示名
 ```
 
 ### 屏幕正文文案
 
-三列表：
-
-| 规则类型 | 使用场景 | 处理方式 |
-|---|---|---|
-| 通用规则 | 多个版型共用同一显示规则 | 作为默认兜底 |
-| 特例规则 | Multi、Node0 / Node1 等差异场景 | 条件更精确时优先命中 |
-| 冲突规则 | 条件相同但显示名不同 | 显式报错，不静默选择 |
-
-示例块：
+左侧“运行时输入”：
 
 ```text
+运行时输入
+Board = C2-8CXL
+HostMode = Multi
+Node = Node0
 SlotNumber = 7
-
-通用规则：Any + NoNode -> Slot20
-特例规则：Multi + Node0 -> Node0-Slot20
-
-两条都命中时，特例规则优先。
 ```
 
-底部一句：
+中间“Layout 表命中示例”：
 
 ```text
-异常场景下优先保证显示准确性：可以少显示，不能显示错。
+候选规则
+1. Any + NoNode + SlotNumber 7 -> Slot20
+2. Multi + Node0 + SlotNumber 7 -> Node0-Slot20
+3. Multi + Node1 + SlotNumber 7 -> Node1-Slot20
+
+当前输入命中规则 1 和规则 2，规则 2 条件更精确，因此选中 Node0-Slot20。
+```
+
+右侧“最终输出”：
+
+```text
+SMBIOS Type9
+SlotDesignation = Node0-Slot20
+
+客户看到的显示名来自 PPT，不由代码现场拼接。
+```
+
+底部风险控制：
+
+```text
+同分但 DisplayName 不同，直接报规则冲突；异常场景下可以少显示，不能显示错。
 ```
 
 ### 图怎么画
 
-不要画复杂算法。画成“同一个 SlotNumber 输入，分叉到通用规则和特例规则，最后特例规则被选中”的小流程。冲突规则放红/橙色警示框。
+画成三段式：
+
+```text
+运行时上下文
+Board / HostMode / Node / SlotNumber
+        ↓
+Layout 表候选规则
+通用规则、Node0 特例、Node1 特例
+        ↓
+Type9 输出
+SlotDesignation = Node0-Slot20
+```
+
+中间 Layout 表不要做成普通 Excel。建议做 3 行规则卡，第二行用蓝色强调“SELECTED”。底部用一个橙色小条写“冲突规则 -> ERROR”。
 
 ### 讲述顺序
 
-先讲“如果不用特例优先，就要穷举 Board × HostMode × Node × SlotNumber”。再用 SlotNumber=7 的例子讲通用和特例。最后强调冲突要报错。
+先接上页：Layout 表已经承接显示规则，这页说明它怎么选。然后按左中右讲：运行时拿到 Board/HostMode/Node/SlotNumber，中间找到候选规则，条件更精确的特例胜出，右侧输出 Type9 显示名。最后补一句：如果规则同分但显示名不同，就报错，不让错误显示名静默出货。
 
 ### 不要写
 
 - 不写“打分算法”作为主标题，领导容易觉得是算法炫技。
 - 不放 PCD 失败矩阵。
 - 不在这一页展开 AI Provider，只说预留扩展能力即可。
+- 不只放“通用规则 / 特例规则 / 冲突规则”三列表，否则和上一页关联不够。
 
 ---
 
