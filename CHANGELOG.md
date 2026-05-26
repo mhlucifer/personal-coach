@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-05-26
+
+### Changed
+
+- Expanded the SMBIOS Type45 debug case with field-source analysis for Firmware Version, Manufacturer, Image Size, Release Date, Firmware ID, and Associated Component Handle.
+- Clarified that BIOS Type45 is a hybrid path: static `.dt/.sdl` record generation plus limited `DynamicUpdateBiosFirmwareInfo()` runtime patching.
+- Added requirement-check reminders for Type45 field ownership, including whether Image Size should mean BIOS region size or physical ROM size.
+
+### Not Uploaded
+
+- Local BIOS source trees under `code-repositories/`.
+- Raw screenshots, logs, and machine-local debug artifacts.
+
 ## 2026-05-25
 
 ### Changed

@@ -28,13 +28,15 @@ Firmware Component Name: BIOS Firmware
 Firmware Version: 0.01.01
 Release Date: 05/25/2026
 Lowest Supported Firmware Version: 0.01.01
-Image Size: 50 MB
+Image Size: 58 MB on the later checked build
 State: Enabled
 Associated Components: 1
   0x0000
 ```
 
 This confirms the root cause was the static BIOS Type45 record being disabled, not a `dmidecode` parsing issue and not a BMC/TPM dynamic Type45 issue.
+
+Later field review added one important nuance: the BIOS Type45 record is not purely static. It is created from static SMBIOS data first, then `DynamicUpdateBiosFirmwareInfo()` patches only a subset of fields at runtime.
 
 ## Key Code Paths
 
@@ -151,6 +153,154 @@ This is a useful repeatable pattern for BIOS SMBIOS bugs:
 2. Search for the displayed component names, not only the SMBIOS type number.
 3. Separate static SMBIOS table generation from dynamic `SmbiosProtocol->Add()` paths.
 4. For static records, always trace SDL/token override order instead of trusting the first default value seen in a package.
+
+## Field Source Review
+
+The useful mental model is:
+
+```text
+TYPE45_STRUCTURE token enables the BIOS Type45 static table
+  -> SmbiosStaticData.dt emits the BIOS Firmware Type45 record
+  -> Smbios.c / DynamicUpdateBiosFirmwareInfo() patches selected fields
+```
+
+The dynamic update path is real, but it does not own every field.
+
+Relevant runtime call:
+
+```text
+/Users/tzy/code/personal-coach/code-repositories/tririverv5-ami/AmiCompatibilityPkg/Smbios/Smbios.c
+  DynamicUpdateStructures()
+    #if (TYPE45_STRUCTURE && UPDATE_FIRMWARE_INVENTORY_TYPE45)
+      DynamicUpdateBiosFirmwareInfo(SmbiosDataTable)
+```
+
+`DynamicUpdateBiosFirmwareInfo()` currently changes:
+
+```text
+Type45 instance 1, string 3 -> Firmware ID, from OEM_ESRT_FIRMWARE_GUID
+Type45 instance 1, string 4 -> Release Date, from TODAY when UPDATE_BIOS_RELEASE_DATE is enabled
+Associated Component Handle -> Type0 handle
+```
+
+It does not update:
+
+```text
+Firmware Version
+Manufacturer
+Image Size
+Lowest Supported Firmware Version
+```
+
+### BIOS Firmware Version
+
+`Firmware Version` is generated from the static token chain:
+
+```text
+SmbiosStaticData.dt:
+  BIOS_FW_VERSION_STRING_NO is the Type45 Firmware Version string number
+  String: BIOS_FW_VERSION
+
+SmbiosStaticDataDt.sdl:
+  BIOS_FW_VERSION = $(BIOS_VERSION)
+
+TencentLegoPkg.sdl:
+  BIOS_VERSION = $(BIOS_TAG)
+  BIOS_TAG = $(PROJECT_MAJOR_VERSION).$(PROJECT_MINOR_VERSION).$(PROJECT_SUB_VERSION)
+```
+
+There is no Type45 equivalent of:
+
+```text
+ReplaceStructureString(Buffer, 45, 1, 2, ...)
+```
+
+So for the BIOS Firmware Type45 record, `Firmware Version` is build-time token data, not runtime data from `DynamicUpdateBiosFirmwareInfo()`.
+
+Important future risk:
+
+- Type0 has an `UPDATE_BIOS_VERSION` path that can dynamically rewrite Type0 BIOS Version.
+- Type45 BIOS Firmware Version does not follow that dynamic rewrite.
+- If `UPDATE_BIOS_VERSION` is enabled later, Type0 and Type45 can drift unless Type45 is updated too or both are kept on the same static token source.
+
+### Manufacturer
+
+Current source:
+
+```text
+SmbiosStaticDataDt.sdl:
+  DEFAULT_STRING = "Default string"
+  BIOS_FW_MANUFACTURER = $(DEFAULT_STRING)
+
+SmbiosStaticData.dt:
+  Manufacturer string number points to BIOS_FW_MANUFACTURER
+  String: BIOS_FW_MANUFACTURER
+```
+
+This means `dmidecode` shows `Manufacturer: Default string` because the field is explicitly filled with AMI's default placeholder. It is not an absent field.
+
+Decision points:
+
+- If the requirement is to show the real BIOS firmware producer, set `BIOS_FW_MANUFACTURER` to an approved real source, such as the same family as Type0 `BIOS_VENDOR`, if product requirements agree.
+- If the requirement is "unknown / not specified", do not fill `"Default string"` as a placeholder. Make the string number become `0` or use the platform's approved "not filled" wording, depending on the team's SMBIOS policy.
+- This requirement cannot be inferred from code alone; confirm whether Type45 Manufacturer is required and what value the product owner expects.
+
+### Image Size
+
+Current source:
+
+```text
+SmbiosStaticDataDt.sdl:
+  BIOS_FW_IMAGE_SIZE = $(FLASH_SIZE)
+
+BiosFdfLayout.sdl:
+  FLASH_SIZE = PcdFlashFdSecPeiSize + PcdFlashFdMainSize + PcdFlashFdBinarySize
+
+Current checked layout:
+  PcdFlashFdSecPeiSize   = 0x00A00000
+  PcdFlashFdMainSize     = 0x00600000
+  PcdFlashFdBinarySize   = 0x02A00000
+  Total                  = 0x03A00000 = 58 MB
+```
+
+This matches the separate ROM layout hint:
+
+```text
+TencentLegoPkg/Dxe/TencentAssetInfo/RomLayoutInfo.c:
+  ONLY_BIOS_SIZE = 0x3A00000
+```
+
+So Type45 `Image Size: 58 MB` is plausibly the BIOS image / BIOS region size.
+
+By contrast, Type0 `ROM Size: 64 MB` is influenced by a different path:
+
+```text
+SmbiosBoard.c:
+  BIOS ROM Size (Physical Flash device) dynamic update
+  GetMaxRegionLimit()
+  Type0.BiosRomSize = MaxFlashLimit / 0x10000
+```
+
+So the two fields may be semantically different:
+
+- Type0 `ROM Size`: physical SPI flash / BIOS ROM capacity.
+- Type45 `Image Size`: firmware image currently programmed in the device, which can mean the BIOS region/image size.
+
+Decision point:
+
+- If the product requirement says Type45 Image Size must report physical ROM size, then `BIOS_FW_IMAGE_SIZE` should be changed to the same source as Type0's physical flash interpretation.
+- If the product requirement says Type45 Image Size should report the BIOS firmware image/region size, then `58 MB` is defensible and may be more accurate than `64 MB`.
+- Confirm this explicitly with the team; code alone can explain current value, but it cannot decide the product requirement.
+
+### Requirement Checks To Remember
+
+For future SMBIOS field reviews, always ask:
+
+1. Is there a real requirement for this field to be shown?
+2. If the field is shown, what exact source should it use?
+3. Should Type45 BIOS Firmware Version be the same as Type0 BIOS Version?
+4. Should Type45 Image Size mean BIOS region/image size or physical ROM capacity?
+5. If a field is unknown, should it be omitted/string index `0`, show `Not Specified`, show `Not Filled`, or use a real default?
 
 ## How To Trace Static vs Dynamic SMBIOS Code
 
