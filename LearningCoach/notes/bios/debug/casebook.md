@@ -8,6 +8,7 @@ This is the index for reusable BIOS troubleshooting cases. The goal is to turn e
 | --- | --- | --- | --- | --- | --- | --- |
 | DBG-001 | 2026-05-20 | FVB / StandaloneMM / SMBIOS changes | Parked, not reproducible | `FwBlockServiceStandaloneMm.c` ASSERT and page fault after Type2 AssetTag / Type11 TDX related image changes | Separate source-change suspicion from machine-local flash/FV/NVRAM state; capture failing FV base address next time | [FVB StandaloneMM ASSERT](./fvb-standalonemm-assert-type11-assettag-case.md) |
 | DBG-002 | 2026-05-25 | SMBIOS Type45 | Verified fixed | `dmidecode -t 45` showed BMC/TPM Type45 but no BIOS Firmware Type45 / BIOS version | Split Type45 producers first; BIOS Type45 is static table plus limited `DynamicUpdateBiosFirmwareInfo()` patching, so field values may come from different sources | [Type45 BIOS firmware version missing](./type45-bios-firmware-version-missing.md) |
+| DBG-003 | 2026-05-27 | Boot flow / BDS / Boot Retry | New, not analyzed | `Boot Retry = Enabled` and no boot devices installed leads to black screen instead of setup option interface | Separate no-boot-option, failed-boot-option, and retry-loop states before choosing a fix | [Boot Retry enabled no-device black screen](./boot-retry-enabled-no-device-black-screen.md) |
 
 ## Case Rules
 
@@ -42,3 +43,13 @@ When an ASSERT lands in a shared platform service, avoid jumping straight to the
 - Does cold reset, full flash, or NVRAM clear change reproducibility?
 
 For FVB/flash cases, the next useful data point is often a base address, region name, or FV header dump.
+
+### Boot Retry / No Boot Device
+
+When a no-device boot issue appears only with Boot Retry enabled, separate these cases before chasing code:
+
+- No boot options exist.
+- Boot options exist but all are invalid or fail.
+- Boot retry is looping on a stale or invalid boot target.
+
+The screen symptom can be identical, but the BDS branch and fix can be different.

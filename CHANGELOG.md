@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-05-27
+
+### Changed
+
+- Added a new BIOS debug case for `Boot Retry = Enabled` with no boot devices causing a black screen instead of entering the setup option interface.
+- Recorded the initial reproduction condition, expected behavior, evidence needed next time, and the first boot-flow debugging split: no boot options vs failed boot options vs retry loop.
+
+### Added Files
+
+- `LearningCoach/notes/bios/debug/boot-retry-enabled-no-device-black-screen.md`
+
+### Not Uploaded
+
+- Local BIOS source trees under `code-repositories/`.
+- Raw screenshots, logs, and machine-local debug artifacts.
+
 ## 2026-05-26
 
 ### Changed
