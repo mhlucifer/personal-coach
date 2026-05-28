@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-05-28
+
+### Changed
+
+- Added a SMBIOS Type41 debug case for one PCIe M.2 device showing an unexpected `DeviceName` from a likely incorrect Type41 PCI identity match.
+- Added a SMBIOS Type17 debug case for an intermittent DIMM record that kept Intel/base default strings after long reboot testing.
+- Recorded the new Type17 observation that `DeviceLocator`, `Asset Tag`, and serial-related strings all looked default, pointing to a missed per-record post-update path rather than only a locator formatting issue.
+- Extended the BIOS debug casebook with reusable patterns for SMBIOS post-update misses and Type41 PCI `DeviceName` tracing.
+
+### Added Files
+
+- `LearningCoach/notes/bios/debug/type41-m2-extra-devicename.md`
+- `LearningCoach/notes/bios/debug/type17-dimm-locator-reverts-to-intel-default.md`
+
+### Not Uploaded
+
+- Local BIOS source trees under `code-repositories/`.
+- Raw screenshots, serial logs, dmidecode dumps, and machine-local debug artifacts.
+
 ## 2026-05-27
 
 ### Changed

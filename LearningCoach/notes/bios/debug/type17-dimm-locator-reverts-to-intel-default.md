@@ -1,0 +1,174 @@
+# Type17 DIMM locator reverts to Intel default after reboot testing
+
+Date: 2026-05-28
+
+Status: initial analysis.
+
+## Symptom
+
+During long reboot testing, at about the 158th reboot, the memory in physical slot `DIMM0A0` showed an unexpected Type17 locator in OS:
+
+```text
+Locator: CPU0_DIMM_CH15S0
+```
+
+Expected locator:
+
+```text
+Locator: DIMM0A0
+```
+
+The string `CPU0_DIMM_CH15S0` is not random. It is the Intel / base memory SMBIOS default locator format generated before the Tencent Type17 post-update changes it to the project format.
+
+Later review of the screenshot showed an important expansion of the symptom: the affected Type17 record did not only keep the default `DeviceLocator`. Its `Asset Tag`, `Serial Number`, and related strings also looked like Intel/base defaults rather than Tencent post-updated values.
+
+This changes the first suspect from "DeviceLocator formatting only" to:
+
+> The affected Type17 record was probably not hit by the Tencent Type17 post-update path at all, or the update path failed/skipped for that record.
+
+## Local Code Anchors
+
+Default Intel-style Type17 locator:
+
+```text
+OakStream/Intel/ServerSiliconPkg/Library/PeiMemDecodePolicyLib/PeiMemDecodePolicyLib.c
+```
+
+Default format:
+
+```c
+"CPU%d_DIMM_CH%dS%d"
+```
+
+Tencent Type17 post-update:
+
+```text
+TencentLegoPkg/Dxe/TencentSmbiosUpdate/TencentType17Update/TencentType17Update.c
+TencentLegoPkg/Library/TencentSmbiosUpdateLib/TencentSmbiosUpdateLib.c
+TencentLegoPkg/Library/TencentSmbiosUpdateLib/TencentSmbiosUpdateLib.sdl
+```
+
+Tencent project format:
+
+```c
+"DIMM%d%c%d"
+```
+
+Example:
+
+```text
+Socket 0, Channel 0, Dimm 0 -> DIMM0A0
+```
+
+## Current Best Guess
+
+The affected Type17 record likely did not get updated by `UpdateType17DeviceLocator()`, so it kept the Intel/base locator string.
+
+Because `DeviceLocator`, `AssetTag`, and `SerialNumber` all appear default on the same record, the issue is probably not limited to the locator formatter. It is more likely a per-record miss in `TencentType17UpdateMain()`:
+
+- The Type17 update module may run overall, but one SMBIOS Type17 record is not reached.
+- `SmbiosProtocol->GetNext()` may start from the wrong cursor, skip a record, or return records in an order that no longer matches the current `Socket -> Channel -> Dimm` loop.
+- The code may update a different Type17 handle than the one corresponding to `DIMM0A0`.
+- A failed `UpdateString()` may be invisible because the update status is not logged strongly enough.
+
+The important local implementation detail is that `TencentType17UpdateMain()` walks logical memory coordinates and calls `SmbiosProtocol->GetNext()` once per coordinate:
+
+```c
+for (Socket = 0; Socket < MaxSocket; Socket++) {
+  for (Channel = 0; Channel < MaxSocketCh; Channel++) {
+    for (Dimm = 0; Dimm < MaxChDimm; Dimm++) {
+      Status = SmbiosProtocol->GetNext (..., &SmbiosHandle, ..., &Record, ...);
+      UpdateType17DeviceLocator (..., Socket, Channel, Dimm);
+    }
+  }
+}
+```
+
+This assumes:
+
+1. Type17 records are returned in exactly the same order as `Socket -> Channel -> Dimm`.
+2. The number of Type17 records equals the number of loop iterations.
+3. `GetNext()` always starts from the intended first Type17 record.
+4. No previous code has already consumed or shifted the SMBIOS handle.
+
+If any assumption breaks, one record can be skipped, shifted, or left with the default locator.
+
+## Suspicious Code Points
+
+1. `SmbiosHandle` should be initialized to `SMBIOS_HANDLE_PI_RESERVED` before the first `GetNext()` call.
+2. The code should check `UpdateType17DeviceLocator()` return status and log failures.
+3. A more robust implementation should not rely only on `GetNext()` order. It should map records by the pre-assigned Type17 handle or by current/default locator.
+4. The screenshot showing `CPU0_DIMM_CH15S0` suggests the record still has its base/default locator, so the Tencent update did not cover it or failed on that string update.
+5. The same screenshot also suggests the same record kept base/default Asset Tag and Serial Number, so the whole per-record update may have been missed, not just one string.
+
+## First Debug Checklist
+
+Capture these from the failing boot before changing code:
+
+```bash
+dmidecode -t 17 > type17_bad.log
+dmidecode -t 16 > type16_bad.log
+```
+
+Then compare with a good boot:
+
+```bash
+dmidecode -t 17 > type17_good.log
+```
+
+Check:
+
+- Whether only one Type17 record keeps `CPU0_DIMM_CH15S0`.
+- Whether serial number, asset tag, bank locator, and handle also look default or shifted.
+- Whether the failing record's SMBIOS handle is stable across good and bad boots.
+- Whether `DIMM0A0` appears anywhere else in the bad boot.
+
+Recommended temporary BIOS logs:
+
+```c
+DEBUG ((DEBUG_INFO,
+  "Type17 update S%dC%dD%d Handle=0x%x OldLocatorIndex=%d Status=%r\n",
+  Socket,
+  Channel,
+  Dimm,
+  SmbiosHandle,
+  SmbiosType17->DeviceLocator,
+  Status
+));
+```
+
+Also log the string generated by `UpdateType17DeviceLocator()` and the return value from `SmbiosProtocol->UpdateString()`.
+
+Add a final post-pass scan after the update loop:
+
+```text
+For every Type17 record:
+  print Handle
+  print DeviceLocator
+  print BankLocator
+  print SerialNumber
+  print AssetTag
+  flag any record that still starts with CPU*_DIMM_CH* or ends with _AssetTag
+```
+
+This turns the next reproduction into a yes/no split:
+
+- If the bad handle never appears in the update logs, enumeration skipped it.
+- If it appears but maps to the wrong `Socket/Channel/Dimm`, order binding is wrong.
+- If it appears and update status is an error, investigate `UpdateString()` inputs.
+- If it appears and update succeeds but later returns to default, another module overwrote the record after Tencent Type17 update.
+
+## Root Cause Draft
+
+The BIOS creates Type17 records with Intel/base default strings such as `CPU0_DIMM_CH15S0` and `CPU0_DIMM_CH15S0_AssetTag`, then a Tencent DXE update rewrites selected Type17 strings to the project format. In the failing boot, one Type17 record appears not to have been rewritten, so OS `dmidecode` exposed the original default locator and related default strings. The likely cause is a fragile Type17 update loop that depends on SMBIOS `GetNext()` order and lacks strong handle-to-slot validation.
+
+## Solution Draft
+
+Initialize the SMBIOS handle before enumeration, check and log every `UpdateType17DeviceLocator()` result, and make the Type17 update map each SMBIOS record to the correct Socket/Channel/Dimm using a stable key instead of relying only on record order. A practical first fix is:
+
+- Set `SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED` before the first `GetNext()`.
+- Log old locator, generated locator, handle, and update status for every Type17 record.
+- If available, use pre-assigned `MemDecodeSetup->SmbiosType17Handles[Socket][Channel][Dimm]` to find/update the exact handle.
+- Prefer a stable identity-based update over a pure "next record equals next logical DIMM" assumption. Practical options are:
+  - update Type17 strings at the Type17 creation source, using `MemDecodeSetup->MemoryDeviceIds[Socket][Channel][Dimm]`;
+  - or enumerate all Type17 records first, parse the existing default locator like `CPU0_DIMM_CH15S0` back to `Socket/Channel/Dimm`, then update that exact record.
