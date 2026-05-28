@@ -504,44 +504,84 @@ export async function createSlide(presentation, _ctx, number) {
   }
 
   if (number === 10) {
-    header(slide, "04 / AI REVIEW", "AI Review 从“结果展示”升级为“过程可回溯的风险处置”", 10);
-    sectionLabel(slide, "旧链路", 82, 210, C.muted);
-    stage(slide, "触发审查", 86, 260, 118, C.panel);
-    arrow(slide, 212, 280);
-    stage(slide, "AI 输出结果", 248, 260, 132, C.panel);
-    arrow(slide, 388, 280);
-    stage(slide, "网页展示评论", 424, 260, 146, C.panel);
-    imageSlot(slide, 780, 214, 338, 276, "截图位 1", "AI Review 页面 / 评审结果截图");
-    sectionLabel(slide, "新链路", 82, 418, C.blue);
-    ["代码变更", "上下文材料", "完整性检查", "风险识别", "复核校验", "AI Review 页面"].forEach((s, i) => {
-      stage(slide, s, 86 + i * 108, 478, 90, i === 3 ? C.ink : C.panel, i === 3 ? "#FFFFFF" : C.ink);
-      if (i < 5) text(slide, "→", 178 + i * 108, 498, 20, 26, { size: 20, color: C.blue, bold: true });
+    header(slide, "04 / AI REVIEW", "AI Review 新增上下文完整性检查，降低模型只看局部 diff 的漏判风险", 10);
+    sectionLabel(slide, "旧方式", 72, 204, C.muted);
+    card(slide, 72, 244, 236, 126, { fill: C.panel });
+    text(slide, "diff + 固定规则", 100, 268, 170, 26, { size: 20, bold: true, color: C.ink });
+    text(slide, "评论较少时，不容易判断是没有风险，还是上下文不够。", 100, 310, 166, 42, { size: 14, color: C.slate });
+
+    sectionLabel(slide, "当前方式", 72, 406, C.blue);
+    const flow10 = ["代码变更", "上下文收集", "完整性检查", "受控分析", "证据补充", "AI Review"];
+    flow10.forEach((s, i) => {
+      const x = 72 + (i % 3) * 94;
+      const y = 446 + Math.floor(i / 3) * 74;
+      stage(slide, s, x, y, 74, i === 2 ? C.ink : C.panel, i === 2 ? "#FFFFFF" : C.ink);
+      if (i % 3 < 2) text(slide, "→", x + 76, y + 20, 16, 24, { size: 16, color: C.blue, bold: true });
     });
-    rect(slide, 780, 522, 338, 74, { fill: C.softAmber });
-    text(slide, "AI Review 留痕", 806, 536, 286, 24, { size: 20, bold: true, color: C.ink });
-    text(slide, "保留上下文材料、识别过程和处置记录。", 806, 564, 286, 22, { size: 14, color: C.slate });
-    text(slide, "团队仍通过 AI Review 页面查看最终结果；后台增加上下文材料和过程记录，用于解释“为什么报 / 为什么不报”。", 86, 584, 610, 56, {
-      size: 17,
+
+    const caps = [
+      ["上下文材料", "补充变更文件、函数窗口、EDK 元数据和上报链路。", C.blue],
+      ["完整性检查", "记录模块、配置、调用链和 reporting-flow 是否足够。", C.green],
+      ["过程留痕", "输出上下文覆盖记录，管理员可回看缺什么、补了什么。", C.amber],
+    ];
+    caps.forEach((c, i) => {
+      const y = 214 + i * 116;
+      rect(slide, 354, y, 330, 88, { fill: i === 0 ? C.softBlue : i === 1 ? C.softGreen : C.softAmber });
+      text(slide, c[0], 382, y + 18, 130, 24, { size: 21, bold: true, color: C.ink });
+      text(slide, c[1], 382, y + 48, 260, 28, { size: 14, color: C.slate });
+    });
+
+    imageSlot(slide, 736, 206, 360, 262, "截图位 1", "上下文材料 / 覆盖记录 / 管理员页面截图");
+    miniTable(slide, [
+      ["真实提交回放", "6 个 case 成功运行", "已验证", C.softGreen, C.green],
+      ["历史问题反向样本", "4 / 4 在中间过程触达预期风险", "触达", C.softBlue, C.blue],
+      ["negative 负样本", "2 个正常改动未进入正式问题", "无正式误报", C.softGreen, C.green],
+    ], 736, 494, 360, 38);
+
+    text(slide, "重点不是页面换样式，而是审查前先判断材料是否足够；评论为空也能区分“无明确问题”还是“上下文 / 证据不足”。", 72, 626, 620, 32, {
+      size: 15,
       color: C.slate,
     });
     return slide;
   }
 
   if (number === 11) {
-    header(slide, "04 / AI REVIEW VALIDATION", "代表样本回放用于验证风险是否进入 AI Review 可见路径", 11);
-    card(slide, 78, 214, 250, 150, { fill: C.panel });
-    text(slide, "风险样本", 106, 242, 150, 28, { size: 24, bold: true, color: C.red });
-    text(slide, "用历史问题反向还原，观察模型能否识别风险。", 106, 292, 180, 46, { size: 17, color: C.slate });
-    card(slide, 360, 214, 250, 150, { fill: C.panel });
-    text(slide, "负样本", 388, 242, 150, 28, { size: 24, bold: true, color: C.green });
-    text(slide, "用正常兼容性修改和字符串清理，观察是否被误报。", 388, 292, 180, 46, { size: 17, color: C.slate });
-    imageSlot(slide, 752, 214, 366, 300, "截图位 2", "风险识别结果 / 正式问题项截图");
-    kpi(slide, 78, 430, 200, "4/4", "风险样本识别", "规划阶段触达风险", C.blue);
-    kpi(slide, 310, 430, 200, "可见", "处置路径", "部分风险进入正式问题或复核", C.amber);
-    kpi(slide, 542, 430, 200, "0", "新增正式误报", "负样本当前范围内", C.green);
-    card(slide, 752, 546, 366, 76, { fill: C.ink });
-    text(slide, "结论边界", 782, 566, 120, 24, { size: 20, bold: true, color: "#FFFFFF" });
-    text(slide, "该页只说明链路改善，不扩大为全场景准确率结论。", 914, 566, 170, 34, { size: 14, color: "#FFFFFF" });
+    header(slide, "04 / AI REVIEW VALIDATION", "风险处置台账将“模型看到的风险”沉淀为可见、可追踪、可复盘的处置记录", 11);
+    const top = [
+      ["问题断点", "早期能在分析过程看到风险，但正式评论可能只有一部分。", C.red],
+      ["修复动作", "新增风险处置台账，要求每条风险都有正式问题、待确认或排除记录。", C.blue],
+      ["结果收益", "风险从中间过程进入可见结果，后台能解释为什么保留或排除。", C.green],
+    ];
+    top.forEach((c, i) => {
+      const x = 72 + i * 244;
+      rect(slide, x, 206, 216, 104, { fill: i === 0 ? "#FFF2F2" : i === 1 ? C.softBlue : C.softGreen });
+      text(slide, c[0], x + 20, 226, 120, 24, { size: 21, bold: true, color: C.ink });
+      text(slide, c[1], x + 20, 264, 170, 34, { size: 13.5, color: C.slate });
+    });
+
+    card(slide, 72, 344, 686, 206, { fill: C.panel });
+    text(slide, "代表样本回放", 96, 366, 180, 24, { size: 20, bold: true, color: C.ink });
+    const sampleRows = [
+      ["RF001", "固定 buffer 风险", "正式问题"],
+      ["RF003", "链路异常处理风险", "正式问题 + 后台追踪"],
+      ["RF004", "长度和异常上报风险", "2 个正式问题 + 待确认"],
+      ["NEG001", "MFGID 正常扩展", "无用户可见正式评论"],
+      ["NEG002", "字符串清理", "无用户可见正式评论"],
+    ];
+    sampleRows.forEach((r, i) => {
+      const y = 406 + i * 28;
+      rect(slide, 96, y, 638, 24, { fill: i % 2 ? "#F6F8FC" : "#FFFFFF" });
+      text(slide, r[0], 110, y + 4, 58, 14, { size: 11.5, bold: true, color: C.blue, font: MONO });
+      text(slide, r[1], 184, y + 4, 250, 14, { size: 12.5, color: C.slate });
+      text(slide, r[2], 458, y + 4, 250, 14, { size: 12.5, bold: true, color: i < 3 ? C.ink : C.green });
+    });
+
+    imageSlot(slide, 804, 206, 328, 268, "截图位 2", "正式问题 / 待确认项 / 后台处置记录截图");
+    kpi(slide, 804, 504, 150, "3/3", "风险样本可见", "RF 样本", C.blue);
+    kpi(slide, 982, 504, 150, "0", "新增正式误报", "NEG 当前样本", C.green);
+    rect(slide, 72, 654, 1060, 44, { fill: C.ink });
+    text(slide, "边界", 100, 666, 60, 18, { size: 16, bold: true, color: "#FFFFFF" });
+    text(slide, "只说明代表样本回放改善，不扩大为全场景准确率结论；线上误报和漏报仍需继续用真实样本扩充。", 174, 664, 830, 20, { size: 15, color: "#FFFFFF" });
     return slide;
   }
 
