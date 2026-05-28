@@ -24,6 +24,7 @@ const C = {
 const FONT = "PingFang SC";
 const MONO = "Menlo";
 const ASSET = "/Users/tzy/code/personal-coach/ppt_work/material_pack/evidence_images";
+const PACKAGE_ASSET = "/Users/tzy/code/personal-coach/ppt_work/bios_ai_stage_report_package_20260528/evidence";
 
 const images = {
   type9Design: `${ASSET}/slide14_type9_multi_board_refactor_03.png`,
@@ -33,6 +34,9 @@ const images = {
   validationDmi: `${ASSET}/slide13_smbios_validation_auto_01.png`,
   refactorPlan: `${ASSET}/slide12_type8_11_12_ai_refactor_01.png`,
   refactorRules: `${ASSET}/slide12_type8_11_12_ai_refactor_02.png`,
+  aiReviewContext: `${PACKAGE_ASSET}/ai_review_docx_images/image3.png`,
+  aiReviewResult: `${PACKAGE_ASSET}/ai_review_docx_images/image2.png`,
+  aiReviewRiskRecord: `${PACKAGE_ASSET}/ai_review_wait_confirm_risk_record.jpg`,
 };
 
 const dims = {
@@ -43,6 +47,9 @@ const dims = {
   [images.validationDmi]: [619, 685],
   [images.refactorPlan]: [573, 854],
   [images.refactorRules]: [573, 605],
+  [images.aiReviewContext]: [489, 766],
+  [images.aiReviewResult]: [666, 727],
+  [images.aiReviewRiskRecord]: [645, 732],
 };
 
 const dataUrlCache = new Map();
@@ -282,13 +289,13 @@ export async function createSlide(presentation, _ctx, number) {
 
   if (number === 1) {
     rect(slide, 72, 112, 14, 430, { fill: C.blue });
-    text(slide, "BIOS / SMBIOS 适配", 112, 130, 740, 64, {
-      size: 54,
+    text(slide, "5月月度汇报", 112, 140, 740, 76, {
+      size: 62,
       bold: true,
       color: C.ink,
     });
-    text(slide, "与 AI 辅助工程闭环阶段汇报", 112, 198, 760, 64, {
-      size: 42,
+    text(slide, "BIOS / SMBIOS 适配与 AI 辅助工程闭环", 112, 224, 760, 48, {
+      size: 32,
       bold: true,
       color: C.ink,
     });
@@ -318,7 +325,7 @@ export async function createSlide(presentation, _ctx, number) {
       color: C.slate,
       font: MONO,
     });
-    text(slide, "研发工程组", 112, 526, 220, 28, {
+    text(slide, "BIOS 腾讯组", 112, 526, 220, 28, {
       size: 18,
       color: C.slate,
     });
@@ -332,11 +339,11 @@ export async function createSlide(presentation, _ctx, number) {
   }
 
   if (number === 2) {
-    header(slide, "EXECUTIVE SUMMARY", "本阶段完成客户可见信息适配，并跑通 SMBIOS 场景的 AI 辅助工程闭环", 2);
+    header(slide, "EXECUTIVE SUMMARY", "本阶段完成客户可见信息适配，并跑通 SMBIOS 场景的 AI 辅助工程最小闭环", 2);
     const cards = [
       ["客户问题闭环", "V3 遗留显示问题与 V5 新增问题单进入阶段处理，客户可见字段按需求适配。", C.blue],
       ["AI 辅助提效", "Type8 / Type9 / Type11 / Type12 等 SMBIOS 模块进入 AI 辅助重构流程。", C.green],
-      ["质量过程可追踪", "SMBIOS 自动验证和 AI Review 开始沉淀日志、报告和风险处置记录。", C.amber],
+      ["AI Review 能力建设", "SMBIOS 自动验证和 AI Review 开始沉淀日志、报告、上下文材料和风险处置记录。", C.amber],
     ];
     cards.forEach((c, i) => {
       const x = 72 + i * 386;
@@ -360,7 +367,7 @@ export async function createSlide(presentation, _ctx, number) {
     });
     rect(slide, 72, 498, 1136, 82, { fill: C.ink });
     text(slide, "边界说明", 102, 522, 110, 24, { size: 17, bold: true, color: "#FFFFFF" });
-    text(slide, "当前 AI 提效聚焦 SMBIOS 规则清晰、结果可比对的场景，不扩展为所有 BIOS 问题自动修复。", 224, 522, 880, 28, {
+    text(slide, "当前 AI 提效聚焦 SMBIOS 场景，优先选择规则清晰、结果可比对、可复测的问题。", 224, 522, 880, 28, {
       size: 20,
       color: "#FFFFFF",
     });
@@ -386,10 +393,10 @@ export async function createSlide(presentation, _ctx, number) {
   }
 
   if (number === 4) {
-    header(slide, "01 / WORK RESULTS", "V5 SMBIOS 客户可见字段适配和新增问题单完成阶段处理", 4);
+    header(slide, "01 / WORK RESULTS", "V5 SMBIOS 客户可见字段适配和新增问题单完成阶段交付与持续推进", 4);
     miniTable(slide, [
       ["V3 遗留问题闭环", "修复 7 项 SMBIOS 显示问题，覆盖显示名异常、字段缺失、不显示等。", "已上库", C.softGreen, C.green],
-      ["V5 新增问题单", "按客户新增需求完成代码调整和目标环境验证。", "问题单已关闭", C.softGreen, C.green],
+      ["V5 新增问题单", "覆盖 Type41 显示缺失、不插设备 boot 启动黑屏等问题。", "进行中", C.softAmber, C.amber],
       ["Type2 主板信息上报", "整合 PCB / BOARD / SKU 等客户可见字段。", "已上库", C.softGreen, C.green],
       ["Type11 OEM 扩展", "动态上报 TDX 相关 OEM 扩展信息。", "已上库", C.softGreen, C.green],
     ], 72, 206, 1060, 80);
@@ -404,9 +411,9 @@ export async function createSlide(presentation, _ctx, number) {
       stage(slide, label, xs[i], 226, 150, i === 0 || i === 4 ? C.ink : C.panel, i === 0 || i === 4 ? "#FFFFFF" : C.ink);
       if (i < labels.length - 1) arrow(slide, xs[i] + 158, 246);
     });
-    kpi(slide, 110, 410, 290, "1,504", "行实现代码量", "Type9 相关规模参考", C.blue);
+    kpi(slide, 110, 410, 290, "2700+", "行实现 / 重构代码量", "SMBIOS 相关规模参考", C.blue);
     kpi(slide, 495, 410, 290, "9", "类数据采集", "SMBIOS 自动验证范围", C.green);
-    kpi(slide, 880, 410, 290, "0", "正式误报", "当前回归样本范围", C.amber);
+    kpi(slide, 880, 410, 290, "降低", "内存类问题风险", "越界 / 泄漏 / 空指针", C.amber);
     text(slide, "AI 当前定位是辅助实现、辅助验证、辅助复核，不替代工程师判断。", 180, 594, 920, 28, {
       size: 20,
       bold: true,
@@ -434,7 +441,7 @@ export async function createSlide(presentation, _ctx, number) {
       insets: { left: 18, right: 18, top: 12, bottom: 8 },
       valign: "middle",
     });
-    text(slide, "新增版型优先补显示规则，不反复改核心流程；减少现场拼接显示名带来的误显示风险。", 82, 548, 530, 58, {
+    text(slide, "新增版型优先补显示规则，不反复改核心流程，提升复用性、减少维护时间；同时降低误显示风险。", 82, 548, 530, 58, {
       size: 18,
       color: C.slate,
     });
@@ -443,8 +450,8 @@ export async function createSlide(presentation, _ctx, number) {
   }
 
   if (number === 7) {
-    header(slide, "02 / SPEC-DRIVEN BUILD", "Type9 重构通过“规格先行、AI 辅助生成、人工验收”完成落地", 7);
-    const flow = ["客户规则", "结构化规则", "设计文档", "AI 辅助实现", "编译验证", "人工验收"];
+    header(slide, "02 / SPEC-DRIVEN BUILD", "Type9 重构通过“规格先行、AI 生成代码、人工验收”完成落地", 7);
+    const flow = ["客户需求\n架构边界", "结构化规则", "设计文档", "AI 生成代码", "编译验证", "人工验收"];
     flow.forEach((f, i) => {
       const x = 72 + (i % 3) * 180;
       const y = 220 + Math.floor(i / 3) * 118;
@@ -461,20 +468,24 @@ export async function createSlide(presentation, _ctx, number) {
   }
 
   if (number === 8) {
-    header(slide, "03 / VALIDATION", "SMBIOS 验证从“人工多环境切换”沉淀为可追踪自动化流程", 8);
+    header(slide, "03 / VALIDATION", "SMBIOS 验证从“人工多环境切换”沉淀为基于 opencode skills 的可追踪自动化流程", 8);
+    sectionLabel(slide, "旧方式", 72, 204, C.muted);
+    card(slide, 72, 244, 248, 136, { fill: C.panel });
+    text(slide, "人工刷写 + 手动比对", 100, 268, 180, 24, { size: 19, bold: true, color: C.ink });
+    text(slide, "手动切换环境、执行 dmidecode、整理日志，每一步都需要人工确认。", 100, 306, 174, 46, { size: 14, color: C.slate });
+    sectionLabel(slide, "新方式", 72, 414, C.blue);
+    card(slide, 72, 454, 248, 146, { fill: C.softBlue });
+    text(slide, "opencode + skills", 100, 478, 180, 24, { size: 19, bold: true, color: C.ink });
+    text(slide, "将上传、校验、刷写、采集、报告生成串成可重复流程，并可与 AI 辅助开发联动。", 100, 516, 174, 54, { size: 14, color: C.slate });
+
     const steps = ["BIOS 上传", "SHA256 校验", "远程刷写", "人工确认", "系统侧采集", "报告生成"];
     steps.forEach((s, i) => {
       const y = 206 + i * 62;
-      rect(slide, 78, y + 11, 22, 22, { fill: i === 3 ? C.amber : C.blue });
-      text(slide, String(i + 1), 78, y + 14, 22, 16, { size: 12, bold: true, color: "#FFFFFF", align: "center", font: MONO });
-      text(slide, s, 122, y + 8, 240, 28, { size: 20, bold: true, color: C.ink });
-      if (i < steps.length - 1) rect(slide, 89, y + 37, 1, 28, { fill: C.faint });
+      rect(slide, 374, y + 11, 22, 22, { fill: i === 3 ? C.amber : C.blue });
+      text(slide, String(i + 1), 374, y + 14, 22, 16, { size: 12, bold: true, color: "#FFFFFF", align: "center", font: MONO });
+      text(slide, s, 416, y + 8, 210, 28, { size: 19, bold: true, color: C.ink });
+      if (i < steps.length - 1) rect(slide, 385, y + 37, 1, 28, { fill: C.faint });
     });
-    card(slide, 388, 214, 230, 250, { fill: C.panel });
-    text(slide, "覆盖范围", 412, 240, 160, 28, { size: 22, bold: true, color: C.ink });
-    bullet(slide, "9 类 SMBIOS 数据采集", 416, 294, 170, { h: 32 });
-    bullet(slide, "保留刷写前人工确认点", 416, 340, 170, { h: 40, color: C.amber });
-    bullet(slide, "输出原始日志和结构化报告", 416, 394, 170, { h: 40 });
     evidence(slide, images.validationLog, 670, 190, 300, 430, "验证日志截图");
     evidence(slide, images.validationDmi, 990, 190, 190, 430, "dmidecode 输出截图");
     return slide;
@@ -482,16 +493,16 @@ export async function createSlide(presentation, _ctx, number) {
 
   if (number === 9) {
     header(slide, "03 / AI REFACTOR", "Type8 / Type11 / Type12 已验证 AI 适合规范化移植", 9);
-    const flow = ["客户规则\n旧平台实现", "规则整理", "AI 生成 V5 实现", "人工复核", "编译测试"];
+    const flow = ["客户规则\n脚本提取", "边界约束", "AI 生成 V5 代码", "人工复核", "编译测试"];
     flow.forEach((f, i) => {
       stage(slide, f, 72 + i * 112, 218, 92, i === 2 ? C.ink : C.panel, i === 2 ? "#FFFFFF" : C.ink);
       if (i < flow.length - 1) text(slide, "→", 166 + i * 112, 238, 20, 26, { size: 20, color: C.blue, bold: true });
     });
     card(slide, 84, 360, 285, 150, { fill: C.ink });
-    text(slide, "2.0 天", 112, 386, 90, 38, { size: 30, bold: true, color: "#FFFFFF", font: MONO });
+    text(slide, "5.0 天", 112, 386, 90, 38, { size: 30, bold: true, color: "#FFFFFF", font: MONO });
     text(slide, "→", 218, 386, 32, 38, { size: 30, bold: true, color: C.cyan });
-    text(slide, "0.5 天", 250, 386, 102, 38, { size: 30, bold: true, color: "#FFFFFF", font: MONO });
-    text(slide, "以 Type8 / Type11 / Type12 移植试点为例，正式汇报需标注样本口径。", 112, 448, 190, 42, {
+    text(slide, "2.0 天", 250, 386, 102, 38, { size: 30, bold: true, color: "#FFFFFF", font: MONO });
+    text(slide, "以 Type8 / Type11 / Type12 移植试点为例。", 112, 448, 190, 42, {
       size: 13,
       color: "#DDE7F5",
     });
@@ -521,7 +532,7 @@ export async function createSlide(presentation, _ctx, number) {
 
     const caps = [
       ["上下文材料", "补充变更文件、函数窗口、EDK 元数据和上报链路。", C.blue],
-      ["完整性检查", "记录模块、配置、调用链和 reporting-flow 是否足够。", C.green],
+      ["完整性检查", "记录模块、配置、调用链和上报路径是否足够。", C.green],
       ["过程留痕", "输出上下文覆盖记录，管理员可回看缺什么、补了什么。", C.amber],
     ];
     caps.forEach((c, i) => {
@@ -531,7 +542,7 @@ export async function createSlide(presentation, _ctx, number) {
       text(slide, c[1], 382, y + 48, 260, 28, { size: 14, color: C.slate });
     });
 
-    imageSlot(slide, 736, 206, 360, 262, "截图位 1", "上下文材料 / 覆盖记录 / 管理员页面截图");
+    evidence(slide, images.aiReviewContext, 736, 190, 360, 290, "AI Review 上下文材料与 planner 记录");
     miniTable(slide, [
       ["真实提交回放", "6 个 case 成功运行", "已验证", C.softGreen, C.green],
       ["历史问题反向样本", "4 / 4 在中间过程触达预期风险", "触达", C.softBlue, C.blue],
@@ -546,10 +557,10 @@ export async function createSlide(presentation, _ctx, number) {
   }
 
   if (number === 11) {
-    header(slide, "04 / AI REVIEW VALIDATION", "风险处置台账将“模型看到的风险”沉淀为可见、可追踪、可复盘的处置记录", 11);
+    header(slide, "04 / AI REVIEW VALIDATION", "管理员界面将模型看到的风险沉淀为可见、可追踪、可复盘的处置记录", 11);
     const top = [
       ["问题断点", "早期能在分析过程看到风险，但正式评论可能只有一部分。", C.red],
-      ["修复动作", "新增风险处置台账，要求每条风险都有正式问题、待确认或排除记录。", C.blue],
+      ["修复动作", "新增管理员界面的台账检查，要求每条风险都有正式问题、待确认或排除记录。", C.blue],
       ["结果收益", "风险从中间过程进入可见结果，后台能解释为什么保留或排除。", C.green],
     ];
     top.forEach((c, i) => {
@@ -576,12 +587,12 @@ export async function createSlide(presentation, _ctx, number) {
       text(slide, r[2], 458, y + 4, 250, 14, { size: 12.5, bold: true, color: i < 3 ? C.ink : C.green });
     });
 
-    imageSlot(slide, 804, 206, 328, 268, "截图位 2", "正式问题 / 待确认项 / 后台处置记录截图");
+    evidence(slide, images.aiReviewRiskRecord, 814, 196, 300, 288, "AI Review 待确认项与后台处置记录");
     kpi(slide, 804, 504, 150, "3/3", "风险样本可见", "RF 样本", C.blue);
     kpi(slide, 982, 504, 150, "0", "新增正式误报", "NEG 当前样本", C.green);
     rect(slide, 72, 654, 1060, 44, { fill: C.ink });
     text(slide, "边界", 100, 666, 60, 18, { size: 16, bold: true, color: "#FFFFFF" });
-    text(slide, "只说明代表样本回放改善，不扩大为全场景准确率结论；线上误报和漏报仍需继续用真实样本扩充。", 174, 664, 830, 20, { size: 15, color: "#FFFFFF" });
+    text(slide, "可以看出代表样本回放改善；后续继续添加实际案例进行迭代，不扩大为全场景准确率结论。", 174, 664, 830, 20, { size: 15, color: "#FFFFFF" });
     return slide;
   }
 

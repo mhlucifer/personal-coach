@@ -2,7 +2,7 @@
 
 ## 新增截图
 
-文件：
+### 1. 待确认项处置截图
 
 - `evidence/ai_review_wait_confirm_risk_record.jpg`
 
@@ -67,3 +67,39 @@
 > 待确认项示例：模型识别到潜在风险后，经证据判断未形成正式 finding，但保留为可回溯处置记录。
 
 这句话比直接写 `riskLedger / reviewNote / diagnostics` 更适合领导汇报。
+
+### 2. 上下文完整性检查截图
+
+文件：
+
+- `evidence/ai_review_docx_images/image3.png`
+
+来源：
+
+- `source_docs/ai review.docx` 内嵌截图。
+
+截图内容摘要：
+
+- Review Agents 页面显示 planner 已执行完成。
+- 展示模型在审查前先理解了哪些变更、模块、任务和上下文。
+- 支撑 Slide 10 的核心结论：AI Review 不是只看局部 diff，而是先补齐上下文，再进入审查。
+
+推荐放置位置：
+
+- `Slide 10：AI Review 新增上下文完整性检查`
+- 右侧证据区，说明文字：`AI Review 上下文材料与 planner 记录`
+
+### 3. 最终 Review 页面截图（备选）
+
+文件：
+
+- `evidence/ai_review_docx_images/image2.png`
+
+来源：
+
+- `source_docs/ai review.docx` 内嵌截图。
+
+用途：
+
+- 可作为 Slide 10 或 Slide 11 的备选证据，展示正式问题、待确认项、校验状态和置信度。
+- 如果后续想强调“用户最终看到什么”，可以替换到 Slide 11 右侧，或作为 AI Review 附录截图。
