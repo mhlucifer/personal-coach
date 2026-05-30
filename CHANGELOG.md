@@ -6,6 +6,7 @@
 
 - Added a categorized BIOS debug case index for SMBIOS, boot policy, and intermittent failure cases.
 - Recorded AMI's HSTI reply and the tracing method for mapping `Firmware Vendor (IBV) detected errors` to concrete security checks.
+- Added a code-level HSTI trace showing how `0x00110001` and `0x00120001` map to rollback protection and Secure Boot bypass checks, and how `AmiPcdHstiErrorAction` only controls display behavior.
 - Reviewed the Type17 debug log document and recorded the current observation: normal sample updates succeeded, but the detector falsely flagged valid `DIMM0A0` project locators.
 - Refined the Type17 pure-debug recipe to keep behavior unchanged while logging `GetNext` cursor, handle mapping, and `UpdateString` status.
 - Updated Type41 and Type45 case notes with the latest verification and follow-up field checks.

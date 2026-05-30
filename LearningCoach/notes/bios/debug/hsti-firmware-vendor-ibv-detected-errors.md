@@ -81,6 +81,106 @@ Practical tracing method from this reply:
 3. Map the string to the HSTI check function / implemented bit.
 4. Decide whether the product requirement is to fix the security setting or suppress the POST display through `AmiPcdHstiErrorAction`.
 
+## 2026-05-30 Code Trace Details
+
+The POST header is only the role header. It is selected by the HSTI role table:
+
+```text
+AmiHsti.c -> HandleTestResult()
+  Role = PLATFORM_SECURITY_ROLE_PLATFORM_IBV
+  Token = AMI_HSTI_ROLE_PLATFORM_IBV
+  String = "Firmware Vendor(IBV) detected errors:"
+```
+
+The concrete failing items come from error strings appended earlier by the individual HSTI tests. The two observed error codes decode as:
+
+```text
+0x00110001 = TestBit 0x0011 + ErrorNum 0x0001
+           = bit 17, Firmware Rollback Protection
+
+0x00120001 = TestBit 0x0012 + ErrorNum 0x0001
+           = bit 18, Secure Boot Bypass
+```
+
+This is because `ReportError(BitNum, ErrorNum, Token)` formats the HII string in `AmiHsti.uni`:
+
+```text
+AMI_HSTI_ERROR_FIRMWARE_ROLLBACK:
+  "0x%04X%04X RollBack Firmware Error..."
+
+AMI_HSTI_ERROR_SECURE_BOOT_BYPASS:
+  "0x%04X%04X Secure Boot Bypass Error..."
+```
+
+Current implemented bitmap:
+
+```text
+HstiAmi.sdl
+  AmiPcdHstiImplementedTestBitmap = 0x3F0000
+  AmiPcdHstiFirmwareRollbackImplementationBit = 17
+  AmiPcdHstiSecureBootBypassImplementationBit = 18
+```
+
+So these two checks are intended to run in the current project policy.
+
+Rollback failure path:
+
+```text
+RollBackProtection.c
+  TestBit = PcdGet8(AmiPcdHstiFirmwareRollbackImplementationBit)  // 17
+  if bit 17 is implemented:
+      if (!PcdGetBool(AmiPcdFirmwareRollbackProtection))
+          ReportError(17, 1, AMI_HSTI_ERROR_FIRMWARE_ROLLBACK)
+```
+
+The SDL mapping sets `AmiPcdFirmwareRollbackProtection = TRUE` only when:
+
+```text
+IGNORE_IMAGE_ROLLBACK = 0
+IGNORE_RUNTIME_UPDATE_IMAGE_REVISION_CHECK = 0
+```
+
+In the current tree, project/CRB tokens set `IGNORE_IMAGE_ROLLBACK = 1`, so the rollback-protection PCD is likely left at its DEC default `FALSE`. That explains `0x00110001`. To prove it in a build, check the final generated PCD value for `AmiPcdFirmwareRollbackProtection`.
+
+Secure Boot bypass failure path:
+
+```text
+SecureBootBypass.c
+  Error = TRUE
+  Read EFI variable "SecureBoot"
+  if SecureBoot == 1:
+      if !PcdGetBool(AmiPcdSecureBootBypass):
+          Error = FALSE
+  if Error:
+      ReportError(18, 1, AMI_HSTI_ERROR_SECURE_BOOT_BYPASS)
+```
+
+This means the check fails when Secure Boot is disabled or the Secure Boot variable cannot be read. If Secure Boot is enabled, it passes only when bypass capability is disabled. In the current tree, `ENABLE_IMAGE_EXEC_POLICY_OVERRIDE` defaults to `0`, so the bypass PCD is likely safe/false; the more likely trigger is runtime `SecureBoot = 0`. To prove it, capture the runtime Secure Boot variable and the final generated PCD value for `AmiPcdSecureBootBypass`.
+
+Display policy path:
+
+```text
+HstiAmi.sdl
+  AmiPcdHstiErrorAction = 0x0010
+
+AmiHsti.c -> HandleTestResult()
+  RoleAction = (Action >> (Index * 4)) & 0x0F
+```
+
+Role order is IHV, IBV, OEM, ODM. Therefore `0x0010` means `IBV action = 1`: display IBV errors in POST and continue boot. Setting this PCD to `0x0000` suppresses the POST warning display, but does not make the rollback or Secure Boot checks pass.
+
+Customer-facing conclusion:
+
+```text
+This is expected HSTI display behavior under the current policy. The current
+image is configured to display IBV HSTI findings during POST. The observed
+findings are Firmware Rollback Protection and Secure Boot Bypass/Secure Boot
+configuration. If the product requirement is to avoid showing these warnings
+for this customer scenario, AmiPcdHstiErrorAction can be set to 0. If the
+requirement is to pass the security checks, the corresponding security
+configuration must be enabled/fixed instead of only suppressing display.
+```
+
 ## Code Path
 
 Main path:
