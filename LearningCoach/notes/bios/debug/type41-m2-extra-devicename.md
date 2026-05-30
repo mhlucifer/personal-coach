@@ -2,7 +2,7 @@
 
 Date: 2026-05-28
 
-Status: initial analysis. The team has already suspected SMBIOS Type41, especially an incorrect segment or BDF field.
+Status: confirmed. Type41 `Onboard VGA` is being associated with an M.2 BDF.
 
 ## Symptom
 
@@ -12,6 +12,33 @@ Platform has two `SSSTC PJ1-GW1920P` PCIe M.2 devices. In OS, running `lspci -vv
 - The other M.2 device does not.
 
 This is suspicious because two same-model PCIe M.2 devices normally should not differ in `DeviceName` unless firmware/ACPI/SMBIOS provides a label for only one matching PCI device.
+
+## Confirmed Evidence
+
+Observed abnormal `lspci` output:
+
+```text
+lspci -vvv -s 0000:02:00.0 | grep -i DeviceName
+DeviceName: Onboard VGA
+```
+
+This means the NVMe/M.2 device at `0000:02:00.0` is being labeled by firmware metadata as `Onboard VGA`.
+
+`dmidecode -t 41` confirms the matching Type41 entry:
+
+```text
+Handle 0x000F, DMI type 41, 11 bytes
+Onboard Device
+    Reference Designation: Onboard VGA
+    Type: Video
+    Status: Enabled
+    Type Instance: 1
+    Bus Address: 0000:02:00.0
+```
+
+Evidence image, cropped to the terminal output only:
+
+![Type41 Onboard VGA mapped to M.2 BDF](assets/type41-m2-devicename-dmidecode-evidence-20260529.jpg)
 
 ## Key Model
 
@@ -79,14 +106,15 @@ Type41Table->DevFuncNum = (DevNum[Index] << 3) | FuncNum[Index];
 
 This loses the actual segment.
 
-## Current Best Guess
+## Confirmed Interpretation
 
-The extra `DeviceName` on one M.2 probably means:
+The extra `DeviceName` on one M.2 means:
 
 1. A Type41 entry exists.
 2. Its `ReferenceDesignation` string is being exported as a PCI device label.
-3. The Type41 record's segment/bus/dev/function accidentally matches one of the two M.2 devices.
-4. The match is probably accidental, caused by `SegmentGroupNum` being hardcoded to `0` or by wrong `BusNum/DevFuncNum`.
+3. The Type41 record's segment/bus/dev/function matches `0000:02:00.0`.
+4. That BDF is an M.2/NVMe device, so OS tools show `DeviceName: Onboard VGA` on the M.2.
+5. The match is accidental, caused by wrong Type41 PCI identity data, especially `SegmentGroupNum` being hardcoded to `0` or by wrong `BusNum/DevFuncNum`.
 
 The team's "segment is wrong" finding fits this perfectly. On a multi-segment PCIe platform, `Bus:Device.Function` alone is not globally unique. `Segment:Bus:Device.Function` is the real identity. If Type41 forces segment 0, a device intended to be described on another segment may collide with a different device on segment 0.
 
@@ -185,7 +213,7 @@ FuncNum[Index] = (UINT8) FunctionNumber;
 
 ## Root Cause Draft
 
-The BIOS Type41 table incorrectly described an onboard device with an incorrect PCI identity. In particular, `SegmentGroupNum` was hardcoded to `0` instead of using the segment returned by PCI enumeration. As a result, the Type41 record accidentally matched one of the PCIe M.2 NVMe devices in the OS. Linux associated the Type41 `ReferenceDesignation` string with that PCI device, so `lspci -vvv` printed an extra `DeviceName` for only one M.2.
+The BIOS Type41 table incorrectly described `Onboard VGA` with PCI identity `0000:02:00.0`. That BDF belongs to one PCIe M.2/NVMe device, so Linux associated the Type41 `ReferenceDesignation` string with the M.2 and `lspci -vvv -s 0000:02:00.0` printed `DeviceName: Onboard VGA`. The likely code-level cause is that `SegmentGroupNum` is hardcoded to `0` instead of using the segment returned by PCI enumeration, and/or the stored bus/device/function for VGA does not match the real VGA BDF.
 
 ## Solution Draft
 
@@ -239,3 +267,23 @@ lspci -D -vvv -s <m2_b_bdf>
 ```
 
 The Type41 entry should match the intended onboard device, not either M.2 device.
+
+## 2026-05-30 Verification Result
+
+User later verified the fixed image with:
+
+```bash
+dmidecode -t 41
+lspci -D | grep -Ei "non-volatile|nvme|pj1"
+lspci -vvv -s 0000:01:00.0 | grep -i DeviceName
+lspci -vvv -s 0000:02:00.0 | grep -i DeviceName
+```
+
+Observed good result:
+
+- Type41 still shows `Reference Designation: Onboard VGA`.
+- Type41 `Bus Address` is now `0001:02:00.0`, not the M.2 BDF `0000:02:00.0`.
+- The two M.2 devices are visible as `0000:01:00.0` and `0000:02:00.0`.
+- `grep -i DeviceName` for both M.2 BDFs prints no `DeviceName` line.
+
+This is the expected fixed shape: Type41 labels only the intended onboard VGA device and no longer labels either M.2 device as `Onboard VGA`.

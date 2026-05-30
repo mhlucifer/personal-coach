@@ -151,3 +151,93 @@ If the ASSERT becomes reproducible again, test in this order:
 ## Practical Conclusion
 
 Keep the source changes under suspicion, but do not overfit to them yet. The current evidence points more strongly to a transient or machine-local flash/FV/NVRAM state problem. The next useful data point is the failing FV base address from `FwBlockServiceStandaloneMm.c`, because that tells us whether the bad region is related to the changed modules or to a preserved platform flash area.
+
+## 2026-05-28 Addendum: Type2 AssetTag Hardening Notes
+
+Later review of the Type2 AssetTag change found two separate risk classes:
+
+1. The intermittent FVB ASSERT still does not look proven as a deterministic Type2/Type11 logic crash.
+2. The Type2 AssetTag implementation itself should still be hardened, because it touches SMBIOS strings and PCD-backed setup values.
+
+Important crash clue:
+
+```text
+CR2 = 0x60E
+```
+
+This looks more like a NULL or invalid pointer plus offset access than a pure stack overflow. A stack overflow would more likely fault near the current stack pointer or a guard page. Therefore, changing a large local buffer to heap is useful hardening, but it is probably not the full root cause by itself.
+
+AssetTag code review points:
+
+- `PcdTencentPCBVer`, `PcdTencentBoardType`, and `PcdTencentSKUID` default to `0xFF`; treat `0xFF` as invalid/unprogrammed unless the platform owner confirms otherwise.
+- If `0` is also not a valid encoded value, treat `0` as invalid too.
+- Every branch must initialize the final `AsciiString` before calling `SmbiosProtocol->UpdateString`.
+- `PcdGetPtr(AmiPcdBaseBoardAssetTag)` must be checked before `StrCmp`, `StrSize`, or `GetValidSMBIOSString`.
+- `GetValidSMBIOSString()` calls `StrSize(UnicodeStr)` internally, so passing NULL can crash immediately.
+- If converting `AsciiString` back to Unicode for `PcdSetPtrS`, allocate the Unicode buffer from heap or guarantee the PCD implementation copies the data before the stack buffer goes out of scope.
+- `PcdSetPtrS` takes the buffer size as an in/out parameter. Reinitialize `SizeofBuffer` before each separate `PcdSetPtrS` call.
+
+Preferred shape:
+
+```c
+ZeroMem (AsciiString, MAX_SMBIOS_STRING_SIZE);
+
+PcbVer    = PcdGet8 (PcdTencentPCBVer);
+BoardType = PcdGet8 (PcdTencentBoardType);
+SkuId     = PcdGet8 (PcdTencentSKUID);
+
+if (PcbVer != 0xFF && BoardType != 0xFF && SkuId != 0xFF) {
+  AsciiSPrint (
+    AsciiString,
+    MAX_SMBIOS_STRING_SIZE,
+    "PC%02X-BT%02X-SK%02X",
+    PcbVer,
+    BoardType,
+    SkuId
+    );
+} else {
+  UnicodeString = (CHAR16 *) PcdGetPtr (AmiPcdBaseBoardAssetTag);
+  if (UnicodeString == NULL ||
+      PcdDefaultString == NULL ||
+      StrCmp (UnicodeString, PcdDefaultString) == 0) {
+    AsciiStrCpyS (AsciiString, MAX_SMBIOS_STRING_SIZE, DefaultString2);
+  } else {
+    GetValidSMBIOSString (AsciiString, UnicodeString);
+  }
+}
+
+Status = SmbiosProtocol->UpdateString (
+                           SmbiosProtocol,
+                           &SmbiosHandle,
+                           &StringNumber,
+                           AsciiString
+                           );
+```
+
+If the value also needs to be written back to PCD:
+
+```c
+BufSize = (AsciiStrLen (AsciiString) + 1) * sizeof (CHAR16);
+UnicodeBuf = AllocateZeroPool (BufSize);
+if (UnicodeBuf != NULL) {
+  Status = AsciiStrToUnicodeStrS (
+             AsciiString,
+             UnicodeBuf,
+             BufSize / sizeof (CHAR16)
+             );
+  if (!EFI_ERROR (Status)) {
+    SizeofBuffer = StrSize (UnicodeBuf);
+    PcdSetPtrS (AmiPcdBaseBoardAssetTag, &SizeofBuffer, (VOID *) UnicodeBuf);
+
+    SizeofBuffer = StrSize (UnicodeBuf);
+    PcdSetPtrS (PcdSystemAssetTag, &SizeofBuffer, (VOID *) UnicodeBuf);
+  }
+  FreePool (UnicodeBuf);
+}
+```
+
+The practical recommendation is:
+
+- Keep the Type2 fix, but make it boring and defensive.
+- Do not rely on the FVB ASSERT being fixed until the same flash/update path has been stress-tested on the previously failing machine.
+- If the FVB ASSERT appears again, collect the failing FV base address before changing more SMBIOS logic.

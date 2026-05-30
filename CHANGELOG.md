@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-05-30
+
+### Changed
+
+- Added a categorized BIOS debug case index for SMBIOS, boot policy, and intermittent failure cases.
+- Recorded AMI's HSTI reply and the tracing method for mapping `Firmware Vendor (IBV) detected errors` to concrete security checks.
+- Reviewed the Type17 debug log document and recorded the current observation: normal sample updates succeeded, but the detector falsely flagged valid `DIMM0A0` project locators.
+- Refined the Type17 pure-debug recipe to keep behavior unchanged while logging `GetNext` cursor, handle mapping, and `UpdateString` status.
+- Updated Type41 and Type45 case notes with the latest verification and follow-up field checks.
+
+### Added Files
+
+- `LearningCoach/notes/bios/debug/case-index.md`
+- `LearningCoach/notes/bios/debug/hsti-firmware-vendor-ibv-detected-errors.md`
+- `LearningCoach/notes/bios/debug/type17-getnext-debug-instrumentation-plan.md`
+- `LearningCoach/notes/bios/debug/assets/type41-m2-devicename-dmidecode-evidence-20260529.jpg`
+
+### Not Uploaded
+
+- Local BIOS source trees under `code-repositories/`.
+- Raw vendor documents, raw serial logs, full screenshots, and machine-local debug artifacts.
+
 ## 2026-05-28
 
 ### Changed

@@ -424,3 +424,22 @@ Verification checklist:
 - `dmidecode -t 45` has three records: BIOS Firmware, BMC Firmware, TPM Firmware.
 - BIOS Type45 `Firmware Version` matches the expected `BIOS_TAG` or Type0 BIOS version.
 - BIOS Type45 associated component handle points to Type0, not Type38/Type43.
+
+## 2026-05-30 Follow-Up Fields
+
+After the BIOS Type45 entry appears, do not stop at "record exists". Confirm these fields with the owner/customer requirement:
+
+1. Requirement: confirm whether the platform really requires a BIOS Firmware Type45 record.
+2. Version source: confirm Type45 `Firmware Version` is sourced from the same version chain as Type0 BIOS Version, such as `BIOS_VERSION` / `BIOS_TAG`, and will change with normal BIOS version updates.
+3. Manufacturer: confirm whether `Manufacturer: Default string` is acceptable. If not, trace the Type45 manufacturer string token/source and align it with the expected vendor/manufacturer policy.
+4. Image Size: compare Type45 `Image Size` with Type0 `ROM Size`. If Type0 shows `64 MB` but Type45 shows `58 MB`, confirm whether Type45 is intended to report usable firmware image size, packed BIOS image size, or full SPI ROM size. Do not assume it must equal Type0 until the spec interpretation and platform requirement are confirmed.
+
+Useful verification command set:
+
+```sh
+dmidecode -t 0
+dmidecode -t 45
+dmidecode --dump-bin /tmp/smbios.bin
+```
+
+The report should explicitly state which fields are required by the customer and which are inherited from existing AMI/static defaults.
